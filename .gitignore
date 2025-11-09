@@ -12,9 +12,12 @@ build/
 
 # Environment files
 .env
-.env.*
-!.env.example
+.env.local
+.env.development
+.env.production
+.env.test
 .env*.yaml
+!.env.example
 !.env.example.yaml
 
 # Logs

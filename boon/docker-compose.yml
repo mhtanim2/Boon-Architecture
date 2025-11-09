@@ -1,1 +1,148 @@
-version: '3.7'
+version: '3.8'
+
+services:
+  # Email Testing Service
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: boon-mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web UI
+    networks:
+      - boon-network
+    labels:
+      - "com.boon.service=mailhog"
+      - "com.boon.environment=development"
+
+  # Log Aggregation and Visualization
+  seq:
+    image: datalust/seq:latest
+    container_name: boon-seq
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_ADMINUSERHASH=962C8E3E7EC42EE6384CC8BA722AF433A41EE42405EBDC43F4191ED05B4358BB
+    ports:
+      - "5341:80"   # Web UI
+      - "5342:5342" # Ingestion
+    volumes:
+      - seq_data:/data
+    networks:
+      - boon-network
+    labels:
+      - "com.boon.service=seq"
+      - "com.boon.environment=development"
+
+  # Redis Cache (optional but recommended)
+  redis:
+    image: redis:7-alpine
+    container_name: boon-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass redis_dev_password
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - boon-network
+    labels:
+      - "com.boon.service=redis"
+      - "com.boon.environment=development"
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # MySQL Database (optional - use external MySQL for production)
+  mysql:
+    image: mysql:8.0
+    container_name: boon-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_dev
+      MYSQL_DATABASE: boon_dev
+      MYSQL_USER: boon_user
+      MYSQL_PASSWORD: boon_password_dev
+    ports:
+      - "3307:3306"  # Different port to avoid conflicts with local MySQL
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+      - ./docker/mysql/conf:/etc/mysql/conf.d
+    networks:
+      - boon-network
+    labels:
+      - "com.boon.service=mysql"
+      - "com.boon.environment=development"
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --innodb-buffer-pool-size=512M
+      --innodb-log-file-size=128M
+      --max-connections=200
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Elasticsearch (optional - for advanced search)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    container_name: boon-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - boon-network
+    labels:
+      - "com.boon.service=elasticsearch"
+      - "com.boon.environment=development"
+    mem_limit: 1g
+
+  # Nginx Reverse Proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: boon-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - mailhog
+      - seq
+    networks:
+      - boon-network
+    labels:
+      - "com.boon.service=nginx"
+      - "com.boon.environment=development"
+
+volumes:
+  seq_data:
+    driver: local
+  redis_data:
+    driver: local
+  mysql_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
+
+networks:
+  boon-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

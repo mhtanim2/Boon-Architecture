@@ -8,9 +8,17 @@
     "postinstall": "patch-package",
     "prepare": "husky install",
     "start": "nx run-many --target=serve",
+    "dev": "nx run-many --target=serve --parallel=2",
+    "serve": "nx run-many --target=serve",
     "tool:openapig": "ng-openapi-gen -c openapi-gen.json",
     "tool:tomg": "typeorm-model-generator -e mysql",
-    "posttool:tomg": "nx format:write --files ./typeorm-model-generator-output/*"
+    "posttool:tomg": "nx format:write --files ./typeorm-model-generator-output/*",
+    "docker:dev": "docker-compose up -d mailhog seq redis",
+    "docker:full": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:clean": "docker-compose down -v --remove-orphans",
+    "setup:env": "cp apps/api/.env.example apps/api/.env && cp apps/web/.env.example apps/web/.env",
+    "setup:all": "npm install && cd ../nestjs-paginate-boon && npm install && cd .. && npm run setup:env"
   },
   "lint-staged": {
     "*": [
