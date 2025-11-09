@@ -1,0 +1,8 @@
+{
+  "name": "@boon/common/core",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/validator": "^13.7.11"
+  }
+}

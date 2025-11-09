@@ -1,0 +1,31 @@
+
+.userNameClass {
+  font-size: 19px;
+  color: #000000;
+  font-family: 'Roboto-Light' !important
+}
+
+.userNameClass div {
+ font-family: 'Roboto-Light' !important
+}
+
+.pageTitle {
+  font-size: 16px;
+  color: #60604D;
+  font-family: 'Roboto-Medium' !important
+}
+
+.roboMedium {
+  font-family: 'Roboto-Medium' !important
+}
+
+::ng-deep .roboMedium .p-button-label{
+  font-family: 'Roboto-Medium' !important
+}
+
+.globalInputFilter {
+  border: 1px solid #cfcfca !important;
+  border-radius: 2rem;
+  height: 37px;
+  padding-left: 2.5rem !important
+}

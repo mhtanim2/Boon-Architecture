@@ -1,0 +1,415 @@
+
+
+<p-table
+  #usersTable
+  [value]="users"
+  [autoLayout]="true"
+  [rows]="50"
+  [columns]="cols"
+  [showCurrentPageReport]="true"
+  [loading]="tableIsLoading"
+  [totalRecords]="totalRecords"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
+  [(selection)]="selectedUsers"
+  [lazy]="true"
+  (onLazyLoad)="onLazyLoad($event)"
+  dataKey="id"
+  [rowsPerPageOptions]="[50, 100]"
+  [responsive]="true"
+  [sortField]="'username'"
+  [sortOrder]="1"
+  [globalFilterFields]="['username', 'nome', 'cognome', 'cliente']"
+  [paginator]="users.length > 50"
+  [alwaysShowPaginator]="true"
+  [scrollable]="true"
+  csvSeparator=";"
+  [exportFilename]="exportCsvName"
+>
+  <ng-template pTemplate="caption">
+    <div class="flex justify-content-between">
+      <div class="flex align-items-center justify-content-center">
+      <span class="pageTitle">USERS MANAGEMENT</span>
+    </div>
+
+    <div class="flex">
+
+      <button
+        type="button"
+        class="p-button-outlined p-button-rounded ml-2 roboMedium"
+        pButton
+        pRipple
+        icon="pi pi-plus"
+        (click)="openFormModal()"
+        label="CREATE USER"
+        tooltipPosition="left"
+      ></button>
+
+      <p-splitButton styleClass="p-button-outlined p-button-rounded mr-2 ml-2" [model]="items">
+        <ng-template pTemplate="icon">
+          <img alt="logo" src="assets/icons/icon_export.svg" style="width: 1.5rem;margin-right: 7px " />
+          <span style="font-family: 'Roboto-Medium';">EXPORT</span>
+        </ng-template>
+
+      </p-splitButton>
+
+      <span class="p-input-icon-left">
+        <i class="pi pi-search pl-2"></i>
+        <input
+          class="globalInputFilter"
+          pInputText
+          type="text"
+          (input)="usersTable.filterGlobal($event.target.value, 'contains')"
+          placeholder="Search..."
+        />
+      </span>
+
+      <button
+      [disabled]="!selectedUsers?.length"
+      type="button"
+      pButton
+      pRipple
+      class="p-button-outlined p-button-rounded mr-2 ml-2 roboMedium"
+      icon="pi pi-trash"
+      (click)="deleteSelectedFiles(selectedUsers)"
+      [label]="selectedUsers?.length === 1 ? 'DELETE 1 USER': 'DELETE ' + selectedUsers.length + ' USERS'"
+    ></button>
+
+    </div>
+    </div>
+  </ng-template>
+
+  <ng-template
+    pTemplate="header"
+    let-columns
+  >
+    <tr>
+      <th style="width: 4rem">
+        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+      </th>
+      <th></th>
+      <th
+        *ngFor="let col of columns"
+        [pSortableColumn]="col.sortField"
+        class="p-table-scrollable-header"
+        pResizableColumn
+      >
+        <div style="display: flex; align-items: center; text-wrap: nowrap">
+          <div>
+            {{ col.header }}
+            <p-sortIcon
+              *ngIf="col.field !== 'azioni'"
+              [field]="col.sortField"
+            ></p-sortIcon>
+          </div>
+          <ng-container [ngSwitch]="col.field" >
+            <p-columnFilter
+              *ngSwitchCase="'nome'"
+              type="text"
+              display="menu"
+              matchMode="in"
+              [showOperator]="false"
+              [showAddButton]="true"
+              field="nome"
+            ></p-columnFilter>
+
+            <p-columnFilter
+              *ngSwitchCase="'cognome'"
+              type="text"
+              display="menu"
+              matchMode="in"
+              [showOperator]="false"
+              [showAddButton]="true"
+              field="cognome"
+            ></p-columnFilter>
+
+            <p-columnFilter
+              *ngSwitchCase="'stato'"
+              field="stato.id"
+              display="menu"
+              matchMode="in"
+              [showMatchModes]="false"
+              [showOperator]="false"
+              [showAddButton]="false"
+              [showApplyButton]="false"
+            >
+              <ng-template pTemplate="header">
+                <div
+                  class="px-3 pt-3 pb-0"
+                  style="min-width: 300px"
+                >
+                  <span class="font-bold">Status</span>
+                </div>
+              </ng-template>
+              <ng-template
+                pTemplate="filter"
+                let-value
+                let-filter="filterCallback"
+              >
+                <p-multiSelect
+                  [ngModel]="value"
+                  (onChange)="filter($event.value)"
+                  [ngModel]="value"
+                  optionLabel="nome"
+                  optionValue="id"
+                  [options]="statuses"
+                  placeholder="All"
+                  [showToggleAll]="false"
+                  [maxSelectedLabels]="3"
+                  [selectedItemsLabel]="'{0} items selected'"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="33"
+                >
+                </p-multiSelect>
+              </ng-template>
+            </p-columnFilter>
+
+            <p-columnFilter
+              *ngSwitchCase="'ruolo'"
+              field="profili.ruolo.id"
+              display="menu"
+              matchMode="in"
+              [showMatchModes]="false"
+              [showOperator]="false"
+              [showAddButton]="false"
+              [showApplyButton]="false"
+            >
+              <ng-template pTemplate="header">
+                <div
+                  class="px-3 pt-3 pb-0"
+                  style="min-width: 300px"
+                >
+                  <span class="font-bold">Roles</span>
+                </div>
+              </ng-template>
+              <ng-template
+                pTemplate="filter"
+                let-value
+                let-filter="filterCallback"
+              >
+                <p-multiSelect
+                  [ngModel]="value"
+                  (onChange)="filter($event.value)"
+                  [options]="roles"
+                  optionLabel="nome"
+                  optionValue="id"
+                  placeholder="All"
+                  [showToggleAll]="false"
+                  [maxSelectedLabels]="3"
+                  [selectedItemsLabel]="'{0} items selected'"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="33"
+                >
+                </p-multiSelect>
+              </ng-template>
+            </p-columnFilter>
+
+            <p-columnFilter
+              *ngSwitchCase="'cliente'"
+              field="cliente.id"
+              display="menu"
+              matchMode="in"
+              [showMatchModes]="false"
+              [showOperator]="false"
+              [showAddButton]="false"
+              [showApplyButton]="false"
+            >
+              <ng-template pTemplate="header">
+                <div
+                  class="px-3 pt-3 pb-0"
+                  style="min-width: 300px"
+                >
+                  <span class="font-bold">Agency</span>
+                </div>
+              </ng-template>
+              <ng-template
+                pTemplate="filter"
+                let-value
+                let-filter="filterCallback"
+              >
+                <p-multiSelect
+                  [ngModel]="value"
+                  (onChange)="filter($event.value)"
+                  [options]="agencies"
+                  placeholder="All"
+                  [showToggleAll]="false"
+                  [maxSelectedLabels]="3"
+                  optionLabel="cliente.ragioneSociale"
+                  optionValue="id"
+                  [selectedItemsLabel]="'{0} items selected'"
+                  [virtualScroll]="true"
+                  [virtualScrollItemSize]="33"
+                >
+                </p-multiSelect>
+              </ng-template>
+            </p-columnFilter>
+
+            <p-columnFilter
+              *ngSwitchCase="'username'"
+              type="text"
+              display="menu"
+              matchMode="in"
+              [showOperator]="false"
+              [showAddButton]="true"
+              field="username"
+            ></p-columnFilter>
+
+            <p-columnFilter
+              *ngSwitchCase="'dataCreazione'"
+              type="date"
+              field="dataCreazione"
+              display="menu"
+            ></p-columnFilter>
+
+          </ng-container>
+        </div>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template
+    pTemplate="body"
+    let-row
+    let-rowIndex="rowIndex"
+  >
+    <tr>
+      <td>
+        <p-tableCheckbox [value]="row"></p-tableCheckbox>
+      </td>
+      <td>
+        <p-avatar
+          shape="circle"
+          [style]="{ 'background-color': '#60604D', color: '#ffffff', width: '50px', height: '50px' }"
+          label="RMP"
+        ></p-avatar>
+      </td>
+      <ng-container
+        *ngFor="let col of cols"
+        [ngSwitch]="col.field"
+      >
+      <td *ngSwitchCase="'username'" class="userNameClass">
+        <span class="p-column-title">Username</span>
+        <div class="flex align-items-center">
+          <i
+            *ngIf="!row.flagEmailVerificata"
+            class="pi pi-exclamation-circle mr-2"
+            pTooltip="Email not verified"
+            [ngStyle]="{ color: '#D32F2F' }"
+          ></i>
+          {{ row.username }}
+        </div>
+      </td>
+        <td *ngSwitchCase="'nome'">
+          <span class="p-column-title">First name</span>
+          {{ row.nome }}
+        </td>
+        <td *ngSwitchCase="'cognome'">
+          <span class="p-column-title">Last name</span>
+          {{ row.cognome }}
+        </td>
+        <td *ngSwitchCase="'stato'">
+          <!-- <span class="p-column-title">Status</span>
+            [severity]="row.stato.nome === 'DISABLED' ? 'danger' : 'success'" -->
+            <!-- <span>{{ row.stato.nome }}</span> -->
+
+            <div
+            class="flex align-items-center"
+            style="height: 35px"
+          >
+            <p-inputSwitch
+              [ngModel]="row.stato.flagAbilitato"
+              (onChange)="onChangeStatus($event.checked, row)"
+            >
+            </p-inputSwitch>
+          </div>
+
+        </td>
+        <td *ngSwitchCase="'ruolo'">
+          <span class="p-column-title">Type</span>
+            <span  *ngFor="let ruolo of row.ruoli" class="mx-1 my-1">{{ ruolo.nome }}</span>
+        </td>
+        <td *ngSwitchCase="'cliente'">
+          <span class="p-column-title">Agency</span>
+          {{ row.cliente.ragioneSociale }}
+        </td>
+
+        <td *ngSwitchCase="'dataCreazione'">
+          <span class="p-column-title">Creation date</span>
+          {{ row.dataCreazione | date : 'dd/MM/yyyy' }}
+        </td>
+        <td *ngSwitchCase="'azioni'">
+          <span class="p-column-title">Actions</span>
+          <div class="flex align-items-center">
+            <p-button
+              label="EDIT"
+              styleClass="p-button-link roboMedium"
+              (click)="openFormModal(row)"
+            ></p-button>
+            <p-button
+              label="DELETE"
+              styleClass="p-button-link roboMedium"
+              (click)="showDeleteDialog(row, rowIndex)"
+            ></p-button>
+          </div>
+        </td>
+      </ng-container>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="11">There are no users</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog
+  [header]="modalTitle"
+  [(visible)]="showDialog"
+  [maximizable]="false"
+  [draggable]="true"
+  [resizable]="true"
+  [style]="{ width: '50vw', minWidth: '50vw'}"
+  [modal]="true"
+  (onHide)="closeDialog()"
+>
+  <boon-user-form
+    [roles]="roles"
+    [statuses]="statuses"
+    [agencies]="agencies"
+    [permissionLevels]="permissionLevels"
+    [formIsSaving]="formIsSaving"
+    [user]="selectedUser"
+    (submitForm)="save($event)"
+    (cancelForm)="showDialog = false"
+  ></boon-user-form>
+</p-dialog>
+
+<p-confirmDialog
+  #cd
+  key="cd"
+  icon="pi pi-exclamation-triangle"
+  [style]="{ width: '425px' }"
+>
+  <p-footer>
+    <button
+      type="button"
+      pButton
+      class="p-button-rounded p-button-outlined roboMedium"
+      icon="pi pi-times"
+      label="BACK"
+      (click)="cd.reject()"
+      [disabled]="cdIsLoading"
+    ></button>
+    <button
+      type="button"
+      pButton
+      class="p-button-rounded p-button-outlined roboMedium"
+      [icon]="!cdIsLoading ? 'pi pi-trash' : 'pi pi-spin pi-spinner'"
+      [label]="!cdIsLoading ? 'DELETE' : 'DELETING...'"
+      (click)="cd.accept()"
+      [disabled]="cdIsLoading"
+    ></button>
+  </p-footer>
+</p-confirmDialog>
+
+<p-toast
+  position="top-right"
+></p-toast>

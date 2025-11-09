@@ -1,0 +1,137 @@
+{
+  "name": "boon-web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "boon",
+  "sourceRoot": "apps/boon-web/src",
+  "tags": [],
+  "targets": {
+    "release": {
+      "command": "cp -rv ./dist/apps/boon-web/. /var/www/html/boon-web"
+    },
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/boon-web",
+        "index": "apps/boon-web/src/index.html",
+        "main": "apps/boon-web/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/boon-web/tsconfig.app.json",
+        "assets": ["apps/boon-web/src/.htaccess", "apps/boon-web/src/favicon.ico", "apps/boon-web/src/assets"],
+        "styles": [
+          "apps/boon-web/src/assets/theme/denim/theme-light.scss",
+          "apps/boon-web/src/assets/layout/css/layout-light.scss",
+          "apps/boon-web/src/styles.scss"
+        ],
+        "scripts": ["node_modules/prismjs/prism.js", "node_modules/prismjs/components/prism-typescript.js"],
+        "allowedCommonJsDependencies": ["lodash", "dayjs", "dayjs/*"]
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "3mb",
+              "maximumError": "5mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/boon-web/src/environments/environment.ts",
+              "with": "apps/boon-web/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "staging": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "3mb",
+              "maximumError": "5mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "6kb",
+              "maximumError": "10kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/boon-web/src/environments/environment.ts",
+              "with": "apps/boon-web/src/environments/environment.staging.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "boon-web:build:production"
+        },
+        "staging": {
+          "browserTarget": "boon-web:build:staging"
+        },
+        "development": {
+          "browserTarget": "boon-web:build:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "options": {
+        "port": 4200,
+        "proxyConfig": "apps/boon-web/proxy.conf.json"
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "boon-web:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/boon-web/**/*.ts", "apps/boon-web/**/*.html"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/boon-web/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "boon-web:build"
+      }
+    }
+  }
+}

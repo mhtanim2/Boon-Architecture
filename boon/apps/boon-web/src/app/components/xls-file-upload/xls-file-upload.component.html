@@ -1,0 +1,204 @@
+<p-fileUpload
+  #fileUpload
+  [fileLimit]="1"
+  [showUploadButton]="false"
+  (onSelect)="onFileChange($event)"
+  (onRemove)="onFileClear()"
+  (onClear)="onFileClear()"
+>
+  <ng-template pTemplate="content">
+    <div
+      *ngIf="data && cols"
+      class="text-center"
+    >
+      <button
+        type="button"
+        pButton
+        class="p-button-rounded p-button-outlined"
+        icon="pi pi-check"
+        label="UPLOAD"
+        (click)="confirmUpload()"
+        [disabled]="hasSomeErrors"
+      ></button>
+      <p class="m-0">
+        <small
+          *ngIf="hasSomeErrors"
+          class="p-error"
+          >Must correct all errors before uploading</small
+        >
+      </p>
+    </div>
+
+    <ng-container *ngIf="data && cols; else emptyMessage">
+      <p-table
+        #dataTable
+        [columns]="cols"
+        [value]="data"
+        [scrollable]="true"
+        scrollHeight="flex"
+        columnResizeMode="expand"
+        [resizableColumns]="true"
+        responsiveLayout="scroll"
+        (onEditInit)="editInit($event)"
+        (onEditComplete)="editComplete(dataTable, $event)"
+      >
+        <ng-template
+          pTemplate="header"
+          let-columns
+        >
+          <tr>
+            <th *ngFor="let col of columns">
+              <div class="flex align-items-center white-space-nowrap">
+                <span class="mr-2"> {{ col.header }}</span>
+                <p-columnFilter
+                  type="text"
+                  display="menu"
+                  [showOperator]="false"
+                  [showAddButton]="true"
+                  [field]="col.field"
+                ></p-columnFilter>
+              </div>
+            </th>
+            <th
+              alignFrozen="right"
+              pFrozenColumn
+              [frozen]="true"
+            >
+              <span>Has errors?</span>
+              <div class="flex align-items-center justify-content-center white-space-nowrap">
+                <p-columnFilter
+                  type="boolean"
+                  [field]="'hasErrors'"
+                ></p-columnFilter>
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+        <ng-template
+          pTemplate="body"
+          let-rowData
+          let-rowIndex="rowIndex"
+          let-columns="columns"
+        >
+          <tr style="height: 46px">
+            <td
+              *ngFor="let col of columns"
+              [pEditableColumn]="{ row: rowData, index: rowIndex, col }"
+              [pEditableColumnField]="col.field"
+              [ngClass]="{ 'cell-invalid ': xlsFileUploadService.setError(rowData, col) }"
+            >
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <ng-container [ngSwitch]="xlsFileUploadService.getType(template.composizione, col)">
+                    <p-calendar
+                      *ngSwitchCase="'date'"
+                      [(ngModel)]="rowData[col.field]"
+                      [showTime]="false"
+                      dateFormat="dd/mm/yy"
+                      appendTo="body"
+                      [showIcon]="true"
+                      styleClass="w-full"
+                      [showSeconds]="false"
+                    ></p-calendar>
+
+                    <input
+                      *ngSwitchDefault
+                      pInputText
+                      [type]="xlsFileUploadService.getType(template.composizione, col)"
+                      [(ngModel)]="rowData[col.field]"
+                    />
+                  </ng-container>
+                </ng-template>
+                <ng-template pTemplate="output">
+                  <ng-container [ngSwitch]="xlsFileUploadService.getType(template.composizione, col)">
+                    <div
+                      *ngSwitchCase="'date'"
+                      class="flex flex-column gap-2"
+                    >
+                      <small
+                        *ngFor="let err of xlsFileUploadService.setError(rowData, col)"
+                        class="flex p-error"
+                        >{{ err.message }}</small
+                      >
+                      <div
+                        *ngIf="xlsFileUploadService.setError(rowData, col)"
+                        class="flex"
+                      >
+                        {{ rowData[col.field] }}
+                      </div>
+                      <div
+                        *ngIf="!xlsFileUploadService.setError(rowData, col)"
+                        class="flex"
+                      >
+                        {{ xlsFileUploadService.dateView(rowData[col.field]) }}
+                      </div>
+                    </div>
+                    <div
+                      *ngSwitchDefault
+                      class="flex flex-column gap-2"
+                    >
+                      <small
+                        *ngFor="let err of xlsFileUploadService.setError(rowData, col)"
+                        class="flex p-error"
+                        >{{ err.message }}</small
+                      >
+                      <div class="flex">{{ rowData[col.field] ?? '&nbsp;' }}</div>
+                    </div>
+                  </ng-container>
+                </ng-template>
+              </p-cellEditor>
+            </td>
+            <td
+              alignFrozen="right"
+              pFrozenColumn
+              [frozen]="true"
+            >
+              <div class="flex justify-content-center">
+                <i
+                  *ngIf="rowData.errors.length === 0"
+                  class="pi pi-check-circle"
+                  style="color: green"
+                ></i>
+                <i
+                  *ngIf="rowData.errors.length > 0"
+                  class="pi pi-times"
+                  style="color: darkred"
+                ></i>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #emptyMessage>
+    <ng-container *ngIf="template; else noTemplateSelectedMessage">
+      <a
+        href="javascript:void(0)"
+        (click)="fileUpload.choose()"
+      >
+        <div class="text-center flex flex-column align-items-center justify-content-center">
+          <i
+            class="text-400 pi pi-plus-circle"
+            style="font-size: 6rem"
+          ></i>
+          <div class="flex flex-column my-3">
+            <span class="text-700 text-xl">Drag XLS here</span>
+            <span class="text-700 text-sm">or click to browse</span>
+          </div>
+        </div>
+      </a>
+    </ng-container>
+  </ng-template>
+
+  <ng-template #noTemplateSelectedMessage>
+    <div class="text-center flex flex-column align-items-center justify-content-center">
+      <i
+        class="text-400 pi pi-lock"
+        style="font-size: 6rem"
+      ></i>
+      <span class="text-700 text-xl my-3">First, select a template to upload from the dropdown above</span>
+    </div>
+  </ng-template>
+</p-fileUpload>

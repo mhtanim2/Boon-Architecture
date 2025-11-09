@@ -1,0 +1,7 @@
+# Add files here to ignore them from prettier formatting
+/dist
+/coverage
+.angular
+
+apps/boon-web/src/assets
+apps/boon-web/src/api

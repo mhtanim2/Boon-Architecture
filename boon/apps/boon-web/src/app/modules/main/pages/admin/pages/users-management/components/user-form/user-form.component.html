@@ -1,0 +1,430 @@
+<form
+  (ngSubmit)="doSubmitForm()"
+  [formGroup]="userForm"
+>
+  <div class="grid p-fluid">
+    <div class="col-12 md:col-4">
+      <label for="username">Username</label>
+      <ng-container *ngIf="!formIsLoading; else formfield_placeholder">
+        <input
+          pInputText
+          [ngClass]="{
+            'ng-invalid ng-dirty': userForm.controls.username.invalid && submitted
+          }"
+          type="text"
+          autocomplete="off"
+          pInputText
+          placeholder="Username"
+          [formControl]="userForm.controls.username"
+        />
+        <p class="m-0">
+          <small
+            *ngIf="userForm.controls.username.errors?.required && submitted"
+            class="p-error"
+            >*Username is required</small
+          >
+        </p>
+        <p class="m-0">
+          <small
+            *ngIf="userForm.controls.username.errors?.email && submitted"
+            class="p-error"
+            >*Username must be an e-mail</small
+          >
+        </p>
+      </ng-container>
+    </div>
+
+    <div class="col-4 md:col-2">
+      <label for="flagEmailVerificata">Email verified</label>
+      <ng-container *ngIf="!formIsLoading; else formfield_placeholder">
+        <div
+          class="flex align-items-center"
+          style="height: 35px"
+        >
+          <p-inputSwitch
+            [formControl]="userForm.controls.flagEmailVerificata"
+            inputId="flagEmailVerificata"
+          ></p-inputSwitch>
+        </div>
+      </ng-container>
+    </div>
+
+    <div
+      class="col-4 md:col-2"
+      *ngIf="!formIsLoading && isEdit"
+    >
+      <label for="flagPrimoAccesso">Has logged in</label>
+      <ng-container *ngIf="!formIsLoading; else formfield_placeholder">
+        <div
+          class="flex align-items-center"
+          style="height: 35px"
+        >
+          <p-inputSwitch
+            [disabled]="true"
+            [ngModel]="!user.flagPrimoAccesso"
+            [ngModelOptions]="{ standalone: true }"
+            inputId="flagPrimoAccesso"
+          ></p-inputSwitch>
+        </div>
+      </ng-container>
+    </div>
+
+    <div
+      class="col-6 md:col-4 flex align-items-end justify-content-end"
+      *ngIf="
+        !formIsLoading && isEdit && !userForm.value.flagEmailVerificata && user.username === userForm.value.username
+      "
+    >
+      <ng-container>
+        <button
+          pButton
+          pRipple
+          type="button"
+          [label]="user.flagPrimoAccesso ? 'SEND WELCOME EMAIL' : 'SEND VERIFICATION EMAIL'"
+          icon="pi pi-envelope"
+          (click)="onSendVerificationEmailBt(user)"
+          class="w-auto p-button-outlined p-button-rounded roboMedium"
+        ></button>
+      </ng-container>
+    </div>
+  </div>
+  <div class="grid p-fluid">
+    <div class="col-12 md:col-6">
+      <label for="nome">First name</label>
+      <ng-container *ngIf="!formIsLoading; else formfield_placeholder">
+        <input
+          pInputText
+          type="text"
+          id="nome"
+          name="nome"
+          placeholder="Insert first name"
+          [formControl]="userForm.controls.nome"
+          [ngClass]="{ 'ng-invalid ng-dirty': userForm.controls.nome.invalid && submitted }"
+        />
+        <p class="m-0">
+          <small
+            *ngIf="userForm.controls.nome.errors?.required && submitted"
+            class="p-error"
+            >*First name is required</small
+          >
+        </p>
+      </ng-container>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <label for="cognome">Last name</label>
+      <ng-container *ngIf="!formIsLoading; else formfield_placeholder">
+        <input
+          pInputText
+          type="text"
+          id="cognome"
+          name="cognome"
+          placeholder="Insert last name"
+          [formControl]="userForm.controls.cognome"
+          [ngClass]="{ 'ng-invalid ng-dirty': userForm.controls.cognome.invalid && submitted }"
+        />
+        <p class="m-0">
+          <small
+            *ngIf="userForm.controls.cognome.errors?.required && submitted"
+            class="p-error"
+            >*Last name is required</small
+          >
+        </p>
+      </ng-container>
+    </div>
+
+    <p-divider
+      type="dashed"
+      class="col-12"
+      styleClass="my-0"
+    ></p-divider>
+
+    <div class="col-12 md:col-6">
+      <label for="status">Status</label>
+      <ng-container *ngIf="!formIsLoading; else formfield_placeholder">
+        <p-dropdown
+          [options]="statuses"
+          name="status"
+          appendTo="body"
+          [formControl]="userForm.controls.stato"
+          filter="true"
+          filterPlaceholder="Search for a status"
+          emptyFilterMessage="No status found"
+          optionLabel="nome"
+          optionValue="id"
+          placeholder="Select a status"
+          [ngClass]="{ 'ng-invalid ng-dirty': userForm.controls.stato.invalid && submitted }"
+        >
+        </p-dropdown>
+        <p class="m-0">
+          <small
+            *ngIf="userForm.controls.stato.errors?.required && submitted"
+            class="p-error"
+            >*Status is required</small
+          >
+        </p>
+      </ng-container>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <label for="role">Role</label>
+      <ng-container *ngIf="!formIsLoading; else formfield_placeholder">
+        <p-multiSelect
+          [options]="roles"
+          name="role"
+          appendTo="body"
+          [formControl]="userForm.controls.ruolo"
+          filter="true"
+          filterPlaceholder="Search for a role"
+          emptyFilterMessage="No role found"
+          placeholder="Select a role"
+          optionLabel="nome"
+          optionValue="id"
+          (onPanelShow)="onShowRoleMS($event)"
+          (onChange)="onChangeRoleMS($event.value)"
+          display="chip"
+          [ngClass]="{ 'ng-invalid ng-dirty': userForm.controls.ruolo.invalid && submitted }"
+        >
+        </p-multiSelect>
+        <p class="m-0">
+          <small
+            *ngIf="userForm.controls.ruolo.errors?.required && submitted"
+            class="p-error"
+            >*Roles is required</small
+          >
+        </p>
+      </ng-container>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <label for="resetPasswordCheck">Has to reset password?</label>
+      <ng-container *ngIf="!formIsLoading; else formfield_placeholder">
+        <div
+          class="flex align-items-center"
+          style="height: 35px"
+        >
+          <p-inputSwitch
+            [formControl]="userForm.controls.resetPasswordCheck"
+            inputId="resetPasswordCheck"
+          ></p-inputSwitch>
+        </div>
+      </ng-container>
+    </div>
+
+    <p-divider
+      type="dashed"
+      class="col-12"
+      styleClass="my-0"
+    ></p-divider>
+
+    <div class="col-12 md:col-6">
+      <label for="agency">Agency</label>
+      <ng-container *ngIf="!formIsLoading; else formfield_placeholder">
+        <p-dropdown
+          [options]="agencies"
+          name="agency"
+          appendTo="body"
+          [formControl]="userForm.controls.agenzia"
+          (onShow)="onShowAgencyDD($event)"
+          (onChange)="onChangeAgencyDD($event.value)"
+          filter="true"
+          filterPlaceholder="Search for an agency"
+          emptyFilterMessage="No agency found"
+          placeholder="Select an agency"
+          optionLabel="cliente.ragioneSociale"
+          [ngClass]="{ 'ng-invalid ng-dirty': userForm.controls.agenzia.invalid && submitted }"
+        >
+        </p-dropdown>
+        <p class="m-0">
+          <small
+            *ngIf="userForm.controls.agenzia.errors?.required && submitted"
+            class="p-error"
+            >*Agency is required</small
+          >
+        </p>
+      </ng-container>
+    </div>
+
+    <div class="col-12 md:col-6">
+      <label for="clients">Clients</label>
+      <ng-container *ngIf="!formIsLoading; else formfield_placeholder">
+        <p-multiSelect
+          [options]="clients"
+          name="clients"
+          appendTo="body"
+          [formControl]="userForm.controls.clienti"
+          (onPanelShow)="onShowClientsMS($event)"
+          (onChange)="onChangeClientsMS($event.value)"
+          filter="true"
+          filterPlaceholder="Search for a client"
+          emptyFilterMessage="No client found"
+          placeholder="Select clients"
+          optionLabel="ragioneSociale"
+          display="chip"
+          [ngClass]="{ 'ng-invalid ng-dirty': userForm.controls.clienti.invalid && submitted }"
+        >
+        </p-multiSelect>
+        <p class="m-0">
+          <small
+            *ngIf="userForm.controls.clienti.errors?.required && submitted"
+            class="p-error"
+            >*Clients are required</small
+          >
+        </p>
+      </ng-container>
+    </div>
+
+    <ng-container *ngIf="permissionObject.length > 0">
+      <p-divider
+        type="dashed"
+        class="col-12"
+      ></p-divider>
+
+      <div class="col-12 md:col-12">
+        <h4 class="mb-0">Client settings</h4>
+        <p>(A setting marked with (*) means it is set differently from its default value)</p>
+      </div>
+      <div
+        class="col-12 md:col-12 text-center"
+        *ngIf="userForm.controls.clienti.value.length === 0"
+      >
+        Select some clients to update their settings.
+      </div>
+
+      <div
+        class="col-12 md:col-12"
+        *ngIf="userForm.controls.clienti.value.length > 0"
+      >
+        <p-tabView>
+          <p-tabPanel
+            *ngFor="let client of permissionObject"
+            [header]="client.nome"
+          >
+            <table class="mt-2">
+              <tr *ngFor="let permesso of client.privilegi">
+                <td class="w-8">
+                  <span
+                    >{{ permesso.funzionalita }}
+                    <span
+                      *ngIf="
+                        permesso.flagAbilitataDefault !== permesso.flagAbilitata ||
+                        permesso.idLivelloDefault !== permesso.idLivello
+                      "
+                      >(*)</span
+                    ></span
+                  >
+                </td>
+
+                <td class="w-2">
+                  <p-dropdown
+                    [options]="permissionLevels"
+                    name="permissionLevel"
+                    appendTo="body"
+                    optionLabel="nome"
+                    optionValue="id"
+                    (onChange)="onChangePermissionIS($event)"
+                    [(ngModel)]="permesso.idLivello"
+                    [ngModelOptions]="{ standalone: true }"
+                    placeholder="Select a permission level"
+                    [ngClass]="{ 'ng-invalid ng-dirty': !permesso.idLivello && submitted }"
+                  >
+                  </p-dropdown>
+                  <p class="m-0">
+                    <small
+                      *ngIf="!permesso.idLivello && submitted"
+                      class="p-error"
+                      >*Level is required</small
+                    >
+                  </p>
+                </td>
+                <td class="w-2">
+                  <div class="flex align-items-end justify-content-end">
+                    <p-inputSwitch
+                      class="mx-2"
+                      (onChange)="onChangePermissionIS($event)"
+                      [(ngModel)]="permesso.flagAbilitata"
+                      [ngModelOptions]="{ standalone: true }"
+                    ></p-inputSwitch>
+                    <button
+                      pButton
+                      pRipple
+                      type="button"
+                      (click)="onClickResetPermissionBt(permesso)"
+                      pTooltip="Reset to default"
+                      icon="pi pi-refresh"
+                      class="p-button-rounded p-button-secondary p-button-text"
+                    ></button>
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <div class="flex align-items-center justify-content-end mt-4">
+              <button
+                pButton
+                pRipple
+                type="button"
+                (click)="onClickResetClientPermissionBt(client.privilegi)"
+                label="RESET CLIENT PERMISSIONS TO DEFAULT"
+                icon="pi pi-refresh"
+                class="p-button-rounded p-button-outlined roboMedium"
+              ></button>
+              <button
+                pButton
+                pRipple
+                type="button"
+                (click)="onClickResetAllPermissionBt(permissionObject)"
+                label="RESET ALL PERMISSIONS TO DEFAULT"
+                icon="pi pi-refresh"
+                class="p-button-rounded p-button-outlined ml-2 roboMedium"
+              ></button>
+            </div>
+          </p-tabPanel>
+        </p-tabView>
+      </div>
+    </ng-container>
+  </div>
+</form>
+
+<p-divider></p-divider>
+
+<div class="text-right">
+
+  <button
+    type="button"
+    (click)="doCancelForm()"
+    pButton
+    pRipple
+    [icon]="'pi pi-times'"
+    [disabled]="formIsSaving || formIsLoading"
+    [label]="'CANCEL'"
+    style="border: 0px"
+    class="p-button-rounded p-button-outlined ml-2 roboMedium"
+  ></button>
+  <button
+    type="button"
+    (click)="doSubmitForm()"
+    pButton
+    pRipple
+    [icon]="!formIsSaving ? 'pi pi-check' : 'pi pi-spin pi-spinner'"
+    [disabled]="formIsSaving || formIsLoading"
+    [label]="!formIsSaving ? 'APPLY' : 'APPLYING...'"
+    class="p-button-rounded p-button-outlined roboMedium"
+></button>
+</div>
+
+<p-confirmDialog
+  #cd
+  icon="pi pi-exclamation-triangle"
+  [style]="{ width: '425px' }"
+  acceptButtonStyleClass="p-button-rounded p-button-outlined roboMedium"
+  rejectButtonStyleClass="p-button-rounded p-button-outlined roboMedium"
+  appendTo="body"
+>
+</p-confirmDialog>
+
+<ng-template #formfield_placeholder>
+  <p-skeleton
+    width="100%"
+    height="2rem"
+  ></p-skeleton>
+</ng-template>

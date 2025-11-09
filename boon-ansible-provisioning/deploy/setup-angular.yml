@@ -1,0 +1,93 @@
+---
+- hosts: dev
+
+  vars:
+    - angularapp_path: '/var/www/html/boon-web'
+    - angularapp_virtualhost_conf: '001-boon-web.conf'
+    - nodeapp_root_folder: 'boon'
+    - nodeapp_user_username: 'user_git'
+    - firewall_ports:
+      - port: ssh
+        proto: tcp
+      - port: 4200
+        proto: tcp
+
+  tasks:
+    - name: Ensure apache2 is installed
+      become: true
+      package:
+        name: apache2
+        state: present
+
+    - name: Ensure modrewrite is enabled
+      become: true
+      shell: /usr/sbin/a2enmod rewrite
+      notify: restart apache2
+
+    - name: Change apache2 default port to port 4200
+      become: true
+      lineinfile:
+        dest: /etc/apache2/ports.conf
+        regexp: "^Listen 80"
+        line: "Listen 4200"
+        state: present
+      notify: restart apache2
+
+    - name: Disable default apache2 site
+      become: true
+      shell: /usr/sbin/a2dissite 000-default.conf
+      notify: restart apache2
+
+    - name: "Create document root for virtualhost {{ angularapp_path }}"
+      become: true
+      file:
+        path: "{{ angularapp_path }}"
+        state: directory
+        owner: "{{ nodeapp_user_username }}"
+        mode: '0755'
+
+    - name: "Copy index test page for virtualhost {{ angularapp_path }}"
+      become: true
+      template:
+        src: "templates/index.html.j2"
+        dest: "{{ angularapp_path }}/index.html"
+
+    - name: "Copy apache2 .conf file for virtualhost {{ angularapp_path }}"
+      become: true
+      template:
+        src: "templates/virtualhost.conf.j2"
+        dest: "/etc/apache2/sites-available/{{ angularapp_virtualhost_conf }}"
+
+    - name: "Enable apache2 site {{ angularapp_virtualhost_conf }}"
+      become: true
+      shell: /usr/sbin/a2ensite {{ angularapp_virtualhost_conf }}
+      notify: restart apache2
+
+    - name: Install ufw package
+      become: true
+      package:
+        name: ufw
+        state: present
+
+    - name: Open firewall ports
+      become: true
+      community.general.ufw:
+        state: enabled
+        port: "{{ item.port }}"
+        proto: "{{ item.proto }}"
+        rule: allow
+      loop: "{{ firewall_ports }}"
+
+    - name: Register fact nvm default npm executable path
+      become: true
+      become_user: "{{ nodeapp_user_username }}"
+      shell: bash -ilc 'which npm'
+      register: nvm_npm_path
+      changed_when: false
+
+  handlers:
+    - name: restart apache2
+      become: true
+      service:
+        name: apache2
+        state: restarted

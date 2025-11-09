@@ -1,0 +1,20 @@
+{{{responseMethodTsComments}}}{{responseMethodName}}({{>operationParameters}}): Observable<{{@root.responseClass}}<{{{resultType}}}>> {
+    const rb = new {{@root.requestBuilderClass}}(this.rootUrl, {{@root.typeName}}.{{operation.pathVar}}, '{{operation.method}}');
+    if (params) {
+{{#operation.parameters}}
+      {{#if (eq name 'tenant')}}rb.path('tenant', params['tenant'] ?? this.tenantResolver.resolve().slug, {});{{else}}rb.{{in}}('{{{name}}}', params{{{varAccess}}}, {{{parameterOptions}}});{{/if}}
+{{/operation.parameters}}
+{{#requestBody}}
+      rb.body(params.body, '{{{mediaType}}}');
+{{/requestBody}}
+    }
+
+    return this.http.request(
+      rb.build({ responseType: '{{responseType}}', accept: '{{accept}}', context })
+    ).pipe(
+      filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        {{> handleResponse}}
+      })
+    );
+  }

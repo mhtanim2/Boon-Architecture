@@ -1,0 +1,44 @@
+---
+- hosts: dev
+  vars:
+    - app_root_folder: 'boon'
+    - app_user_username: 'user_git'
+    - app_user_password: 'bc11v67z'
+    - app_user_ssh_key_filename: 'id_rsa'
+  tasks:
+    - name: Install acl package for ansible
+      become: true
+      package:
+        name: acl
+        state: present
+
+    - name: Add a new user named '{{ app_user_username }}'
+      become: true
+      user:
+        name: "{{ app_user_username }}"
+        shell: /bin/bash
+        password: "{{ app_user_password | password_hash('sha512') }}"
+        generate_ssh_key: yes
+        ssh_key_type: rsa
+        ssh_key_bits: 4096
+        ssh_key_file: ".ssh/{{ app_user_ssh_key_filename }}"
+
+    - name: Read generated public key
+      become: true
+      become_user: "{{ app_user_username }}"
+      slurp:
+        src: "~/.ssh/{{ app_user_ssh_key_filename }}.pub"
+      register: app_user_publickey
+
+    - name: Print generated public key
+      debug:
+        msg: "{{ app_user_publickey['content'] | b64decode }}"
+
+    - name: Create app root folder
+      become: true
+      become_user: "{{ app_user_username }}"
+      file:
+        dest: "~/{{ app_root_folder }}"
+        mode: 0755
+        recurse: yes
+        state: directory

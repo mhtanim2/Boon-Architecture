@@ -1,0 +1,47 @@
+:host ::ng-deep .p-fileupload .p-fileupload-content {
+  background-color: inherit;
+}
+
+:host ::ng-deep .p-fileupload-buttonbar {
+  display: none;
+}
+
+:host ::ng-deep th.p-frozen-column {
+  background-color: darken(#ffffff, 0.6) !important;
+  border-left: 1px solid darken(#eff5fa, 0.6) !important;
+}
+:host ::ng-deep td.p-frozen-column {
+  background-color: darken(#fdfeff, 0.6) !important;
+  border-left: 1px solid darken(#eff5fa, 0.6) !important;
+}
+// ::ng-deep .p-column-filter-buttonbar .p-button {
+//   background-color: white;
+// }
+
+// ::ng-deep .p-fileupload .p-button {
+//   background-color: white;
+// }
+
+.globalInputFilter {
+  border: 1px solid #cfcfca !important;
+  border-radius: 2rem;
+  height: 37px;
+  padding-left: 2.5rem !important
+}
+
+.pageTitle {
+  font-size: 16px;
+  color: #60604D;
+  font-family: 'Roboto-Medium' !important
+}
+
+.roboMedium {
+  font-family: 'Roboto-Medium' !important
+}
+
+::ng-deep .roboMedium .p-button-label{
+  font-family: 'Roboto-Medium' !important
+}
+
+
+

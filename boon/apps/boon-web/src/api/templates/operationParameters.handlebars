@@ -1,0 +1,10 @@
+
+    params{{^operation.parametersRequired}}?{{/operation.parametersRequired}}: {
+{{#operation.parameters}}
+{{{tsComments}}}  {{{var}}}{{#if (or (eq required false) (eq var 'tenant'))}}?{{/if}}: {{{type}}};{{#tsComments}}{{/tsComments}}
+{{/operation.parameters}}
+{{#requestBody}}
+  {{{../operation.requestBody.tsComments}}}body{{^../operation.requestBody.required}}?{{/../operation.requestBody.required}}: {{{type}}}
+{{/requestBody}}
+    },
+    context?: HttpContext

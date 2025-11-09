@@ -1,0 +1,259 @@
+//TABLE
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: white;
+  color: #A0A094
+}
+
+.p-datatable .p-datatable-header {
+  border: 0px;
+  padding: 0px !important
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  font-size: 16px;
+  color: #a0a094;
+  font-family: 'Roboto-Regular';
+  border: 0.5px solid #CFCFCA;
+}
+
+.p-datatable .p-paginator-bottom {
+  border-width: 0px
+}
+
+.p-paginator .p-paginator-current {
+  color: #A0A094
+}
+
+.p-datatable .p-sortable-column.p-highlight:hover {
+  background: white;
+}
+
+.p-datatable .p-sortable-column.p-highlight {
+  background: white;
+}
+
+.p-datatable .p-sortable-column:not(.p-highlight):hover {
+  background: white;
+  color: #60604D;
+}
+
+.p-datatable .p-datatable-header {
+  background: white;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: white;
+  border-color: #60604D;
+  color: black;
+}
+
+//LOGIN
+
+.login-body {
+  background: white;
+  color: #60604D;
+}
+
+.login-body .login-wrapper .login-panel p > a {
+  color: #c3ccdd;
+}
+
+//MENU
+
+.layout-menu-light .menu-wrapper {
+  box-shadow: 0px 0px;
+}
+
+.layout-topbar-light .layout-topbar {
+  box-shadow: 0px 0px;
+}
+
+//PRIMENG COMPONENTS
+
+.p-checkbox .p-checkbox-box {
+  border: 0.5px solid #AFAFA6;
+}
+
+.p-button {
+  background-color: white !important;
+}
+
+.p-button:enabled:hover {
+  background: rgba(96, 96, 77, 0.04)
+}
+
+.p-button-outlined {
+  color: #60604D !important;
+  border-color: #cfcfca !important
+}
+
+.p-button.p-button-link {
+  // font-size: 16px !important;
+  color: #60604D !important
+}
+
+.p-button.p-button-link:enabled:focus {
+  box-shadow: 0 0 0 0rem rgba(96, 96, 77, 0.3);
+}
+
+.p-multiselect.p-multiselect-chip .p-multiselect-token {
+  margin-right: 1px;
+  background: #AFAFA6;
+  color: black
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background: #91D3A7
+}
+
+.p-inputswitch.p-inputswitch-checked:not(.p-disabled):hover .p-inputswitch-slider {
+  background: #66be67;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  background: lightgrey;
+}
+
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item.p-highlight {
+  background: lightgrey;
+}
+
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item.p-highlight {
+  color: black;
+}
+
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
+  color: black;
+}
+
+.p-checkbox .p-checkbox-box.p-highlight {
+  background: white;
+}
+
+.p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box.p-highlight:hover {
+  background: #EFEFED
+}
+
+.p-column-filter-menu-button.p-column-filter-menu-button-active, .p-column-filter-menu-button.p-column-filter-menu-button-active:hover {
+  background: lightgrey;
+  color: #60604D;
+  padding-top: 3px;
+}
+
+.p-column-filter-menu-button {
+  padding-top: 5px;
+  color: #A0A094
+}
+
+.p-datepicker table td > span.p-highlight {
+  color: black;
+  background: lightgrey;
+}
+
+.p-inputtext {
+  font-family: 'Roboto-Regular'
+ }
+
+ .p-fileupload-choose:not(.p-disabled):active {
+  background: white;
+  color: black;
+  border-color: black;
+}
+
+.p-fileupload-choose:not(.p-disabled):hover{
+  background: white;
+  color: black;
+  border-color: black;
+}
+
+.p-listbox .p-listbox-list .p-listbox-item.p-highlight {
+  background: lightgrey;
+}
+
+.p-element .p-splitbutton-menubutton {
+  border-left-width: 0px !important;
+  border-color: #cfcfca !important;
+}
+
+.p-element.p-splitbutton-defaultbutton {
+  padding-right: 0px !important;
+  border-color: #cfcfca !important;
+  border-right-width: 0px !important
+}
+
+.p-orderlist .p-orderlist-list .p-orderlist-item.p-highlight {
+  color: black;
+  background: #EFEFED;
+}
+
+
+//BREADCRUMB
+
+.layout-breadcrumb {
+  background-color: #EFEFED;
+}
+
+//GENERAL
+
+.layout-wrapper.layout-horizontal .layout-main {
+  padding-top: 100px;
+}
+
+body.main-body {
+  background: white
+}
+
+//TOPBAR
+
+.layout-topbar-light .layout-topbar .layout-topbar-wrapper .layout-topbar-right .layout-topbar-actions > li.user-profile > ul .layout-submenu-header {
+  background: white
+}
+
+.layout-topbar-light .layout-topbar .layout-topbar-wrapper .layout-topbar-right .layout-topbar-actions > li.user-profile > ul .layout-submenu-header .profile-info h6 {
+  color: #515C66;
+}
+
+.layout-topbar-light .layout-topbar .layout-topbar-wrapper .layout-topbar-right .layout-topbar-actions > li.user-profile > ul .layout-submenu-header .profile-info span {
+  color: #515C66;
+}
+
+
+@media (max-width: 992px) {
+  .menu-wrapper {
+    .layout-menu-container {
+      .layout-menu {
+        li {
+          &.layout-root-menuitem {
+            > a:only-child {
+              display: flex;
+              margin-left: 15px;
+            }
+            // > div {
+            //   padding-left: 12px;
+            //   margin-bottom: 6px;
+            //   margin-top: 24px;
+
+            //   > .layout-menuitem-text {
+            //     font-size: 12px;
+            //     font-weight: 600;
+            //     text-transform: uppercase;
+            //   }
+            // }
+          }
+        }
+      }
+    }
+  }
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon {
+  color: #60604D;
+}
+
+.p-dialog .p-dialog-content {
+  color: #60604D;
+}
+
+
+

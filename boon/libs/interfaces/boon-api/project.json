@@ -1,0 +1,35 @@
+{
+  "name": "interfaces-boon-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/interfaces/boon-api/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/interfaces/boon-api",
+        "main": "libs/interfaces/boon-api/src/index.ts",
+        "tsConfig": "libs/interfaces/boon-api/tsconfig.lib.json",
+        "assets": ["libs/interfaces/boon-api/*.md"],
+        "updateBuildableProjectDepsInPackageJson": true
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/interfaces/boon-api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/interfaces/boon-api/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

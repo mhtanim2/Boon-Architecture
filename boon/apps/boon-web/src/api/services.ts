@@ -1,0 +1,16 @@
+export { AppApiClient } from './services/app-api-client';
+export { ClientiApiClient } from './services/clienti-api-client';
+export { TenantsApiClient } from './services/tenants-api-client';
+export { AuthApiClient } from './services/auth-api-client';
+export { UsersApiClient } from './services/users-api-client';
+export { UsersStatiAccountsApiClient } from './services/users-stati-accounts-api-client';
+export { FileUploadsApiClient } from './services/file-uploads-api-client';
+export { ArticoliApiClient } from './services/articoli-api-client';
+export { ArticoliStatiArticoliApiClient } from './services/articoli-stati-articoli-api-client';
+export { AdminStagioniApiClient } from './services/admin-stagioni-api-client';
+export { AdminGeneriApiClient } from './services/admin-generi-api-client';
+export { RevisioniStatiRevisioniApiClient } from './services/revisioni-stati-revisioni-api-client';
+export { TemplateApiClient } from './services/template-api-client';
+export { TemplateStatiTemplateApiClient } from './services/template-stati-template-api-client';
+export { PrivilegiApiClient } from './services/privilegi-api-client';
+export { StorageApiClient } from './services/storage-api-client';

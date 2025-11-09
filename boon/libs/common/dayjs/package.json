@@ -1,0 +1,7 @@
+{
+  "name": "@boon/common/dayjs",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "dayjs": "^1.11.7"
+  }
+}

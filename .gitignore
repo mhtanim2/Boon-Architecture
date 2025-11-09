@@ -1,0 +1,62 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Build outputs
+dist/
+tmp/
+out-tsc/
+build/
+*/dist/
+*/build/
+
+# Environment files
+.env
+.env.*
+!.env.example
+.env*.yaml
+!.env.example.yaml
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# IDE and editor files
+.vscode/
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.history/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Angular specific
+.angular/
+.cache/
+
+# Testing
+coverage/
+*.lcov
+
+# Docker
+.dockerignore
+
+# Database
+*.sqlite
+*.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup

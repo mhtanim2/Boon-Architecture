@@ -1,0 +1,7 @@
+{
+  "name": "@boon/common/zod",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "zod": "^1.11.7"
+  }
+}

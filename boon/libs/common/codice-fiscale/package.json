@@ -1,0 +1,9 @@
+{
+  "name": "@boon/common/codice-fiscale",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "peerDependencies": {
+    "lodash": "^4.17.21",
+    "moment": "^2.29.4"
+  }
+}

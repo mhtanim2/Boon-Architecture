@@ -1,0 +1,292 @@
+<ng-container *rxLet="model$; let vm">
+  <span class="pageTitle">IMPORT SHOOTING</span>
+
+  <div class="flex flex-row-reverse mb-2">
+    <button
+      *ngIf="vm.selectedTemplate"
+      type="button"
+      pButton
+      pRipple
+      class="p-button-outlined p-button-rounded mr-2 ml-2"
+      icon="pi pi-download"
+      (click)="downloadTemplate()"
+      label="DOWNLOAD TEMPLATE"
+    ></button>
+    <p-dropdown
+      [options]="vm.templates"
+      name="template"
+      appendTo="body"
+      filter="true"
+      filterPlaceholder="Search for a template"
+      emptyFilterMessage="No template found"
+      optionLabel="nome"
+      [(ngModel)]="vm.selectedTemplate"
+      placeholder="Select a template"
+    >
+    </p-dropdown>
+  </div>
+
+  <div class="mb-6">
+    <boon-xls-file-upload
+      #xlsFileUpload
+      [template]="vm.selectedTemplate"
+      (uploadIsDone)="uploadIsDone($event)"
+    ></boon-xls-file-upload>
+  </div>
+
+  <p-table
+    #filesTable
+    [totalRecords]="vm.filesTotalCount"
+    dataKey="id"
+    [value]="!vm.tableIsLoading ? vm.tableFiles : [{}, {}, {}, {}, {}]"
+    [columns]="cols"
+    [showCurrentPageReport]="!vm.tableIsLoading"
+    responsiveLayout="scroll"
+    currentPageReportTemplate="Files {first} - {last} of {totalRecords}"
+    [paginator]="true"
+    [rows]="20"
+    [rowsPerPageOptions]="[10, 50, 100]"
+    [sortField]="'ultimaModifica'"
+    [sortOrder]="-1"
+    [scrollable]="true"
+    [(selection)]="vm.selectedFiles"
+    [lazy]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex flex-row-reverse">
+        <span class="p-input-icon-left">
+          <i class="pi pi-search pl-2"></i>
+          <input
+            class="globalInputFilter"
+            pInputText
+            type="text"
+            (input)="filesTable.filterGlobal($event.target.value, 'contains')"
+            placeholder="Search..."
+          />
+        </span>
+        <button
+          [disabled]="!vm.selectedFiles?.length"
+          type="button"
+          pButton
+          pRipple
+          class="p-button-outlined p-button-rounded mr-2 ml-2"
+          icon="pi pi-trash"
+          (click)="deleteSelectedFiles(vm.selectedFiles)"
+          [label]="vm.selectedFiles?.length === 1 ? 'DELETE 1 FILE' : 'DELETE ' + vm.selectedFiles.length + ' FILES'"
+        ></button>
+        <button
+          type="button"
+          pButton
+          pRipple
+          class="p-button-outlined p-button-rounded mr-2 ml-2"
+          icon="pi pi-file"
+          (click)="exportExcel(filesTable.filteredValue ?? filesTable.value)"
+          [disabled]="!(filesTable.filteredValue ?? filesTable.value)?.length"
+          label="EXPORT"
+        ></button>
+      </div>
+    </ng-template>
+    <ng-template
+      pTemplate="header"
+      let-columns
+    >
+      <tr>
+        <th style="width: 4rem">
+          <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+        </th>
+        <th
+          *ngFor="let col of cols"
+          pResizableColumn
+          [pSortableColumn]="col.sortField ?? ''"
+          class="p-table-scrollable-header"
+        >
+          <div style="display: flex; align-items: center; text-wrap: nowrap">
+            <div>
+              {{ col.header }}
+              <p-sortIcon
+                *ngIf="col.sortField"
+                [field]="col.sortField"
+              ></p-sortIcon>
+            </div>
+
+            <ng-container [ngSwitch]="col.field">
+              <p-columnFilter
+                *ngSwitchCase="'nomeFile'"
+                type="text"
+                display="menu"
+                [showOperator]="false"
+                [showAddButton]="true"
+                [field]="col.field"
+              ></p-columnFilter>
+
+              <p-columnFilter
+                *ngSwitchCase="'dataOra'"
+                type="date"
+                display="menu"
+                class="ml-auto"
+                [field]="col.field"
+              ></p-columnFilter>
+
+              <p-columnFilter
+                *ngSwitchCase="'ultimaModifica'"
+                type="date"
+                display="menu"
+                class="ml-auto"
+                [field]="col.field"
+              ></p-columnFilter>
+
+              <p-columnFilter
+                *ngSwitchCase="'importedBy'"
+                type="text"
+                display="menu"
+                [showOperator]="false"
+                [showAddButton]="true"
+                [field]="col.field"
+              ></p-columnFilter>
+            </ng-container>
+          </div>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template
+      pTemplate="body"
+      let-row
+      let-rowIndex="rowIndex"
+    >
+      <ng-container *ngTemplateOutlet="table_placeholder"></ng-container>
+      <tr *ngIf="!vm.tableIsLoading">
+        <td>
+          <p-tableCheckbox [value]="row"></p-tableCheckbox>
+        </td>
+
+        <ng-container
+          *ngFor="let col of cols"
+          [ngSwitch]="col.field"
+        >
+          <td *ngSwitchCase="'nomeFile'">
+            <span class="p-column-title">File name</span>
+            <a [href]="getDownloadLink(row)"><i class="pi pi-download mr-2"></i>{{ row.nomeFile }}</a>
+          </td>
+          <td *ngSwitchCase="'used'">
+            <span class="p-column-title">Used</span>
+            {{ row.used }}
+          </td>
+          <td *ngSwitchCase="'dimensione'">
+            <span class="p-column-title">Size</span>
+            {{ prettyBytes(row.dimensione) }}
+          </td>
+          <td *ngSwitchCase="'dataOra'">
+            <span class="p-column-title">Import date</span>
+            {{ row.dataOra | date : 'dd/MM/yyyy' }}
+          </td>
+          <td *ngSwitchCase="'ultimaModifica'">
+            <span class="p-column-title">Last modified</span>
+            {{ row.ultimaModifica | date : 'dd/MM/yyyy' }}
+          </td>
+          <td *ngSwitchCase="'importedBy'">
+            <span class="p-column-title">Imported by</span>
+            {{ row.uploader?.nome + ' ' + row.uploader?.cognome }}
+          </td>
+
+          <td *ngSwitchCase="'azioni'">
+            <span class="p-column-title">Actions</span>
+            <div class="flex align-items-center">
+              <p-button
+                label="DELETE"
+                styleClass="p-button-link roboMedium"
+                (click)="showDeleteDialog(row)"
+              ></p-button>
+            </div>
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-confirmDialog
+    #cd
+    key="cd"
+    icon="pi pi-exclamation-triangle"
+    [style]="{ width: '425px' }"
+  >
+    <p-footer>
+      <button
+        type="button"
+        pButton
+        class="p-button-rounded p-button-outlined"
+        icon="pi pi-times"
+        label="BACK"
+        (click)="cd.reject()"
+        [disabled]="vm.cdIsLoading"
+      ></button>
+      <button
+        type="button"
+        pButton
+        class="p-button-rounded p-button-outlined"
+        [icon]="!vm.cdIsLoading ? 'pi pi-trash' : 'pi pi-spin pi-spinner'"
+        [label]="!vm.cdIsLoading ? 'DELETE' : 'DELETING...'"
+        (click)="cd.accept()"
+        [disabled]="vm.cdIsLoading"
+      ></button>
+    </p-footer>
+  </p-confirmDialog>
+
+  <ng-template #table_placeholder>
+    <tr
+      *ngIf="vm.tableIsLoading"
+      style="height: 57px"
+    >
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+    </tr>
+  </ng-template>
+</ng-container>
+
+<p-toast position="top-right"></p-toast>

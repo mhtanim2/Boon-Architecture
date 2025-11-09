@@ -1,0 +1,8 @@
+{
+  "name": "@boon/backend/mailer",
+  "version": "0.0.1",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/mime-types": "^2.1.1"
+  }
+}

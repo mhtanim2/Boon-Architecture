@@ -1,0 +1,283 @@
+<ng-container *rxLet="model$; let vm">
+
+  <p-table
+    #clientsTable
+    [totalRecords]="vm.clientsTotalCount"
+    dataKey="id"
+    [value]="!vm.clientsIsLoading ? vm.clients : [{}, {}, {}, {}, {}]"
+    [columns]="cols"
+    [showCurrentPageReport]="!vm.clientsIsLoading"
+    responsiveLayout="scroll"
+    currentPageReportTemplate="Clients {first} - {last} of {totalRecords}"
+    [paginator]="vm.clients.length > 50"
+    [rows]="10"
+    [rowsPerPageOptions]="[10, 50, 100]"
+    [sortField]="'ragioneSociale'"
+    [sortOrder]="1"
+    [scrollable]="true"
+    [lazy]="true"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex justify-content-between">
+      <div class="flex align-items-center justify-content-center">
+        <span class="pageTitle">CLIENTS MANAGEMENT</span>
+        </div>
+
+        <div class="flex">
+
+        <button
+          type="button"
+          class="p-button-outlined p-button-rounded ml-2 mr-2 roboMedium"
+          pButton
+          pRipple
+          icon="pi pi-plus"
+          (click)="openFormModal()"
+          label="CREATE CLIENT"
+          tooltipPosition="left"
+        ></button>
+
+        <p-splitButton styleClass="p-button-outlined p-button-rounded mr-2 ml-2" [model]="items">
+          <ng-template pTemplate="icon">
+            <img alt="logo" src="assets/icons/icon_export.svg" style="width: 1.5rem;margin-right: 7px " />
+            <span style="font-family: 'Roboto-Medium';">EXPORT</span>
+          </ng-template>
+
+        </p-splitButton>
+
+
+
+        <span class="p-input-icon-left">
+          <i class="pi pi-search pl-2"></i>
+          <input
+            pInputText
+            class="globalInputFilter"
+            type="text"
+            (input)="clientsTable.filterGlobal($event.target.value, 'contains')"
+            placeholder="Search..."
+          />
+        </span>
+      </div>
+    </div>
+    </ng-template>
+
+    <ng-template
+      pTemplate="header"
+      let-columns
+    >
+      <tr>
+        <th></th>
+        <th
+          *ngFor="let col of cols"
+          pResizableColumn
+          [pSortableColumn]="col.sortField ?? ''"
+          class="p-table-scrollable-header"
+        >
+          <div style="display: flex; align-items: center; text-wrap: nowrap">
+            <div>
+              {{ col.header }}
+              <p-sortIcon
+                *ngIf="col.sortField"
+                [field]="col.sortField"
+              ></p-sortIcon>
+            </div>
+
+            <ng-container [ngSwitch]="col.field">
+              <p-columnFilter
+                *ngSwitchCase="'ragioneSociale'"
+                type="text"
+                display="menu"
+                [showOperator]="false"
+                [showAddButton]="true"
+                [field]="col.field"
+              ></p-columnFilter>
+
+              <p-columnFilter
+                *ngSwitchCase="'codiceSdi'"
+                type="text"
+                display="menu"
+                [showOperator]="false"
+                [showAddButton]="true"
+                [field]="col.field"
+              ></p-columnFilter>
+
+              <p-columnFilter
+                *ngSwitchCase="'eMail'"
+                type="text"
+                display="menu"
+                [showOperator]="false"
+                [showAddButton]="true"
+                [field]="col.field"
+              ></p-columnFilter>
+
+              <p-columnFilter
+                *ngSwitchCase="'telefono'"
+                type="text"
+                display="menu"
+                [showOperator]="false"
+                [showAddButton]="true"
+                [field]="col.field"
+              ></p-columnFilter>
+
+              <p-columnFilter
+                *ngSwitchCase="'web'"
+                type="text"
+                display="menu"
+                [showOperator]="false"
+                [showAddButton]="true"
+                [field]="col.field"
+              ></p-columnFilter>
+            </ng-container>
+          </div>
+        </th>
+      </tr>
+    </ng-template>
+
+    <ng-template
+      pTemplate="body"
+      let-row
+      let-rowIndex="rowIndex"
+    >
+      <ng-container *ngTemplateOutlet="table_placeholder"></ng-container>
+      <tr *ngIf="!vm.clientsIsLoading">
+        <td>
+          <p-avatar
+            [image]="row.tenant.logo"
+            styleClass="mr-2"
+            size="large"
+            shape="circle"
+          ></p-avatar>
+        </td>
+        <ng-container
+          *ngFor="let col of cols"
+          [ngSwitch]="col.field"
+        >
+          <td *ngSwitchCase="'ragioneSociale'" class="businessNameClass">
+            <span class="p-column-title">Business name</span>
+            {{ row.ragioneSociale }}
+          </td>
+          <td *ngSwitchCase="'partitaIva'">
+            <span class="p-column-title">VAT number</span>
+            {{ row.partitaIva }}
+          </td>
+          <td *ngSwitchCase="'eMail'">
+            <span class="p-column-title">E-mail</span>
+            <span>{{ row.eMail }}</span>
+          </td>
+          <td *ngSwitchCase="'telefono'">
+            <span class="p-column-title">Phone number</span>
+            <span>{{ row.telefono }}</span>
+          </td>
+          <td *ngSwitchCase="'web'">
+            <span class="p-column-title">Web</span>
+            {{ row.web }}
+          </td>
+          <td *ngSwitchCase="'tenant.slug'">
+            <span class="p-column-title">Slug</span>
+            {{ row.tenant.slug }}
+          </td>
+
+          <td *ngSwitchCase="'azioni'">
+            <span class="p-column-title">Actions</span>
+            <div class="flex align-items-center">
+              <p-button
+              label="EDIT"
+              styleClass="p-button-link roboMedium"
+              (click)="openFormModal(row)"
+            ></p-button>
+              <p-button
+                label="TEMPLATES"
+                styleClass="p-button-link roboMedium"
+                (click)="openTemplatesModal(row)"
+              ></p-button>
+            </div>
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-dialog
+    #formModal
+    [header]="vm.modalTitle"
+    [(visible)]="vm.showDialog"
+    [maximizable]="true"
+    [draggable]="true"
+    [resizable]="true"
+    [style]="{ width: '50vw', minWidth: '50vw' }"
+    [modal]="true"
+    (onHide)="closeDialog()"
+  >
+    <boon-client-form
+      [client]="vm.selectedClient"
+      (formIsDone)="formIsDone($event)"
+    ></boon-client-form>
+  </p-dialog>
+
+  <p-dialog
+    #templateModal
+    [header]="vm.templateModalTitle"
+    [(visible)]="vm.showTemplateDialog"
+    [maximizable]="true"
+    [draggable]="true"
+    [resizable]="true"
+    [style]="{ width: '50vw', minWidth: '50vw' }"
+    [modal]="true"
+    (onHide)="closeTemplateDialog()"
+  >
+    <boon-templates-list
+      [templates]="vm.templatesList"
+      [templateStatesList]="vm.templateStatesList"
+      [selectedClient]="vm.selectedClient"
+    ></boon-templates-list>
+  </p-dialog>
+
+  <ng-template #table_placeholder>
+    <tr
+      *ngIf="vm.clientsIsLoading"
+      style="height: 57px"
+    >
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td>
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+    </tr>
+  </ng-template>
+</ng-container>

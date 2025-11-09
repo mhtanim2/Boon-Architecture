@@ -1,0 +1,20 @@
+.widthAuto {
+  width: auto !important;
+}
+
+.p-fileupload-choose:not(.p-disabled):hover {
+  background-color: white;
+}
+
+::ng-deep .p-button {
+  background-color: white;
+}
+
+.roboMedium {
+  font-family: 'Roboto-Medium' !important
+}
+
+::ng-deep .roboMedium .p-button-label{
+  font-family: 'Roboto-Medium' !important
+}
+

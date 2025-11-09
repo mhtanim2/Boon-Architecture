@@ -1,0 +1,59 @@
+<ng-container *rxLet="model$; let vm">
+  <div>
+    <button
+      pButton
+      pRipple
+      label="ADD NEW TEMPLATE"
+      styleClass="p-button-link roboMedium"
+      (click)="goToCreateTemplatePage()"
+    ></button>
+  </div>
+
+  <div
+    *ngIf="vm.templates?.length"
+    class="mt-6"
+  >
+    <div *ngFor="let groupedTemplates of templatesByFeature$ | async; let groupIndex = index">
+      <h5>{{ groupedTemplates.funzionalita.nome }}</h5>
+
+      <div
+        class="grid"
+        *ngFor="let template of groupedTemplates.templates; let templateIndex = index"
+      >
+        <div class="col-4">
+          {{ template.nome }}
+        </div>
+        <div class="col-4">
+          {{ template.funzionalita.nome }}
+        </div>
+        <div class="col-1">
+          <div
+            class="flex align-items-center"
+            style="height: 35px"
+          >
+            <p-inputSwitch
+              [ngModel]="template.stato.flagAbilitato"
+              (onChange)="onChangeStatusIS($event.checked, template)"
+            >
+            </p-inputSwitch>
+          </div>
+        </div>
+        <div class="col-1">
+          <button
+            pButton
+            pRipple
+            label="EDIT"
+            styleClass="p-button-link roboMedium"
+            (click)="goToEditTemplatePage(template)"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="mt-3"
+    *ngIf="!vm.templates?.length"
+  >
+    There are no templates for this client yet.
+  </div>
+</ng-container>

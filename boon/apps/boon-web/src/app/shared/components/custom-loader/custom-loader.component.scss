@@ -1,0 +1,59 @@
+.hidden {
+  visibility: hidden;
+}
+
+.splash-screen {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.9);
+  bottom: 0;
+  height: 100%;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+  overflow: hidden;
+  z-index: 99999;
+
+  .splash-loader {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -60px 0 0 -60px;
+    width: 120px;
+    height: 120px;
+    border-radius: 100%;
+    // background-color: #000;
+    // border: 1px solid #000000;
+
+    img {
+      width: 100px;
+      margin-top: 10px;
+      margin-left: 10px;
+    }
+
+    &:after {
+      content: '';
+      background: transparent;
+      width: 140%;
+      height: 140%;
+      position: absolute;
+      border-radius: 100%;
+      top: -20%;
+      left: -20%;
+      opacity: 0.7;
+      box-shadow: var(--primary-color) -4px -5px 3px -3px;
+      animation: rotate 1s infinite linear;
+    }
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}

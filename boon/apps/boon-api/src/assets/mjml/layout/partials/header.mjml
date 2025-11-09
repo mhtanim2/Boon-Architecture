@@ -1,0 +1,19 @@
+<mj-section
+  full-width="full-width"
+  background-color="#3C4962"
+  padding-bottom="0"
+>
+  <mj-column width="100%">
+    <mj-text
+      color="#ffffff"
+      font-weight="bold"
+      align="center"
+      text-transform="uppercase"
+      font-size="16px"
+      letter-spacing="1px"
+      padding-top="30px"
+    >
+      {{caption}}
+    </mj-text>
+  </mj-column>
+</mj-section>

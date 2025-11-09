@@ -1,0 +1,10 @@
+$primaryLightColor: rgba(96, 96, 77, 0.3);
+$primaryColor: #60604D ;
+$primaryDarkColor: darken(#60604D, 30%);
+$primaryDarkerColor: darken(#60604D, 50%);
+$primaryTextColor: #60604D ;
+
+$highlightBg: $primaryColor;
+$highlightTextColor:  rgba(96, 96, 77, 0.3);
+
+@import '../../sass/theme/_theme_light';

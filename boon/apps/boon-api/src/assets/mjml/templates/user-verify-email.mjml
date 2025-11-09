@@ -1,0 +1,30 @@
+<mj-column width="100%">
+  <mj-text
+    color="#637381"
+    font-size="16px"
+    >Hi {{ firstName }} {{ lastName }},
+  </mj-text>
+  <mj-text
+    color="#637381"
+    font-size="16px"
+  >
+    Click on this link to verify your email:
+  </mj-text>
+  <mj-button
+    background-color="#3C4962"
+    align="center"
+    color="#ffffff"
+    font-size="17px"
+    font-weight="bold"
+    href="{{ verificationUrl }}"
+    width="300px"
+  >
+    Verify email
+  </mj-button>
+  <mj-text
+    color="#637381"
+    font-size="16px"
+  >
+    This link will expire in {{ expirationInterval }}.
+  </mj-text>
+</mj-column>

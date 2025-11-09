@@ -1,0 +1,20 @@
+:host ::ng-deep .p-fileupload .p-fileupload-content {
+  background-color: inherit;
+}
+
+:host ::ng-deep .p-fileupload-buttonbar {
+  display: none;
+}
+
+:host ::ng-deep th.p-frozen-column {
+  background-color: darken(#ffffff, 0.6) !important;
+  border-left: 1px solid darken(#eff5fa, 0.6) !important;
+}
+:host ::ng-deep td.p-frozen-column {
+  background-color: darken(#fdfeff, 0.6) !important;
+  border-left: 1px solid darken(#eff5fa, 0.6) !important;
+}
+:host ::ng-deep td.cell-invalid {
+	border: 1px solid darkred !important;
+	background: rgba(255, 0, 0, 0.1) !important;
+}

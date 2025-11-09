@@ -1,0 +1,340 @@
+<ng-container *rxLet="model$; let vm">
+  <form #formRef>
+    <div class="grid p-fluid">
+      <div class="field col-12 md:col-6">
+        <label
+          for="ragioneSociale"
+          class="font-medium text-900"
+          >Client name</label
+        >
+
+        <ng-container *ngIf="!vm.isLoading; else formfield_placeholder">
+          <input
+            type="text"
+            [formControl]="clientForm.controls.ragioneSociale"
+            pInputText
+            placeholder="Insert client name"
+            [ngClass]="{
+              'ng-invalid ng-dirty': clientForm.controls.ragioneSociale.invalid && vm.submitted
+            }"
+          />
+          <small
+            *ngIf="clientForm.controls.ragioneSociale.errors?.required && vm.submitted"
+            class="p-error block"
+            >Insert client name</small
+          >
+        </ng-container>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label
+          for="partitaIva"
+          class="font-medium text-900"
+          >VAT number</label
+        >
+
+        <ng-container *ngIf="!vm.isLoading; else formfield_placeholder">
+          <input
+            type="text"
+            [formControl]="clientForm.controls.partitaIva"
+            pInputText
+            placeholder="Insert VAT number"
+            [ngClass]="{
+              'ng-invalid ng-dirty': clientForm.controls.partitaIva.invalid && vm.submitted
+            }"
+          />
+          <small
+            *ngIf="clientForm.controls.partitaIva.errors?.required && vm.submitted"
+            class="p-error block"
+            >Insert VAT number
+          </small>
+        </ng-container>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label
+          for="codiceFiscale"
+          class="font-medium text-900"
+          >Tax ID code</label
+        >
+
+        <ng-container *ngIf="!vm.isLoading; else formfield_placeholder">
+          <input
+            type="text"
+            [formControl]="clientForm.controls.codiceFiscale"
+            pInputText
+            placeholder="Insert Tax ID code"
+            [ngClass]="{
+              'ng-invalid ng-dirty': clientForm.controls.codiceFiscale.invalid && vm.submitted
+            }"
+          />
+          <small
+            *ngIf="clientForm.controls.codiceFiscale.errors?.required && vm.submitted"
+            class="p-error block"
+            >Insert Tax ID code
+          </small>
+          <small
+            *ngIf="clientForm.controls.codiceFiscale.dirty && clientForm.controls.codiceFiscale.errors?.pattern"
+            class="p-error block"
+            >Tax ID format is incorrect</small
+          >
+        </ng-container>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label
+          for="codiceSdi"
+          class="font-medium text-900"
+          >SDI code</label
+        >
+
+        <ng-container *ngIf="!vm.isLoading; else formfield_placeholder">
+          <input
+            type="text"
+            [formControl]="clientForm.controls.codiceSdi"
+            pInputText
+            placeholder="Insert SDI code"
+            [ngClass]="{
+              'ng-invalid ng-dirty': clientForm.controls.codiceSdi.invalid && vm.submitted
+            }"
+          />
+          <small
+            *ngIf="clientForm.controls.codiceSdi.errors?.required && vm.submitted"
+            class="p-error block"
+            >Insert SDI code
+          </small>
+        </ng-container>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label
+          for="pec"
+          class="font-medium text-900"
+          >PEC</label
+        >
+
+        <ng-container *ngIf="!vm.isLoading; else formfield_placeholder">
+          <input
+            type="text"
+            [formControl]="clientForm.controls.pec"
+            pInputText
+            placeholder="Insert PEC"
+            [ngClass]="{
+              'ng-invalid ng-dirty': clientForm.controls.pec.invalid && vm.submitted
+            }"
+          />
+          <small
+            *ngIf="clientForm.controls.pec.errors?.required && vm.submitted"
+            class="p-error block"
+            >Insert PEC
+          </small>
+          <small
+            *ngIf="clientForm.controls.eMail.errors?.email && vm.submitted"
+            class="p-error"
+            >*E-mail format invalid</small
+          >
+        </ng-container>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label
+          for="telefono"
+          class="font-medium text-900"
+          >Phone number</label
+        >
+
+        <ng-container *ngIf="!vm.isLoading; else formfield_placeholder">
+          <input
+            type="text"
+            [formControl]="clientForm.controls.telefono"
+            pInputText
+            placeholder="Insert phone number"
+            [ngClass]="{
+              'ng-invalid ng-dirty': clientForm.controls.telefono.invalid && vm.submitted
+            }"
+          />
+          <small
+            *ngIf="clientForm.controls.telefono.errors?.required && vm.submitted"
+            class="p-error block"
+            >Insert phone number
+          </small>
+        </ng-container>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label
+          for="eMail"
+          class="font-medium text-900"
+          >E-mail</label
+        >
+
+        <ng-container *ngIf="!vm.isLoading; else formfield_placeholder">
+          <input
+            type="text"
+            [formControl]="clientForm.controls.eMail"
+            pInputText
+            placeholder="Insert E-mail"
+            [ngClass]="{
+              'ng-invalid ng-dirty': clientForm.controls.eMail.invalid && vm.submitted
+            }"
+          />
+          <small
+            *ngIf="clientForm.controls.eMail.errors?.required && vm.submitted"
+            class="p-error block"
+            >Insert E-mail
+          </small>
+          <small
+            *ngIf="clientForm.controls.eMail.errors?.email && vm.submitted"
+            class="p-error"
+            >*E-mail format invalid</small
+          >
+        </ng-container>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label
+          for="web"
+          class="font-medium text-900"
+          >Web</label
+        >
+
+        <ng-container *ngIf="!vm.isLoading; else formfield_placeholder">
+          <input
+            type="text"
+            [formControl]="clientForm.controls.web"
+            pInputText
+            placeholder="Insert website"
+            [ngClass]="{
+              'ng-invalid ng-dirty': clientForm.controls.web.invalid && vm.submitted
+            }"
+          />
+          <small
+            *ngIf="clientForm.controls.web.errors?.required && vm.submitted"
+            class="p-error block"
+            >Insert website
+          </small>
+        </ng-container>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label
+          for="tenant.slug"
+          class="font-medium text-900"
+          >Slug</label
+        >
+        <ng-container *ngIf="!vm.isLoading; else formfield_placeholder">
+          <input
+            id="tenant.slug"
+            type="text"
+            [formControl]="clientForm.controls.tenant"
+            pInputText
+            placeholder="Insert slug"
+            [ngClass]="{
+              'ng-invalid ng-dirty': clientForm.controls.tenant.invalid && vm.submitted
+            }"
+          />
+          <small
+            *ngIf="clientForm.controls.tenant.errors?.required && vm.submitted"
+            class="p-error block"
+            >Insert slug
+          </small>
+        </ng-container>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label
+          for="flagInterno"
+          class="font-medium text-900"
+          >Internal flag</label
+        >
+        <ng-container *ngIf="!vm.isLoading; else formfield_placeholder">
+          <div
+            class="flex align-items-center"
+            style="height: 35px"
+          >
+            <p-inputSwitch
+              [formControl]="clientForm.controls.flagInterno"
+              inputId="flagInterno"
+            ></p-inputSwitch>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="field col-12 md:col-6">
+        <label
+          for="logo"
+          class="font-medium text-900"
+          >Logo</label
+        >
+        <ng-container *ngIf="!vm.isLoading; else formfield_placeholder">
+          <p-fileUpload
+            [formControl]="clientForm.controls.logo"
+            ngDefaultControl
+            #fileUpload
+            accept="image/*"
+            name="file"
+            [showUploadButton]="false"
+            chooseLabel="Choose logo"
+            (onSelect)="selectFile($event.currentFiles)"
+            (onClear)="onFileRemove($event)"
+            (onRemove)="onFileRemove($event)"
+          >
+          </p-fileUpload>
+          <small
+            *ngIf="clientForm.controls.logo.errors?.required && vm.submitted"
+            class="p-error block"
+            >Insert logo
+          </small>
+        </ng-container>
+      </div>
+
+      <div
+        class="field col-12 md:col-6"
+        *ngIf="clientForm.controls.logo.value"
+      >
+        <label
+          for="logo"
+          class="font-medium text-900"
+          >Current logo</label
+        >
+        <div class="flex align-content-center">
+          <img
+            [src]="clientForm.controls.logo.value"
+            style="width: 150px"
+          />
+        </div>
+      </div>
+
+      <p-divider class="col-12"></p-divider>
+
+      <div class="flex justify-content-center col-12">
+        <button
+          #cancelButton
+          pButton
+          pRipple
+          [label]="vm.client ? 'UNDO CHANGES' : 'CANCEL'"
+          class="widthAuto p-button-rounded p-button-outlined roboMedium"
+          [disabled]="vm.isLoading || vm.isSaving"
+          (click)="vm.client ? revertChanges() : closeDialog()"
+        ></button>
+        <button
+          #saveButton
+          pButton
+          pRipple
+          class="widthAuto p-button-rounded p-button-outlined ml-2 roboMedium"
+          [icon]="!vm.isSaving ? 'pi pi-check' : 'pi pi-spin pi-spinner'"
+          [label]="!vm.isSaving ? (vm.client ? 'SAVE CLIENT' : 'ADD CLIENT') : 'SAVING...'"
+          [disabled]="vm.isLoading || vm.isSaving"
+          (click)="saveChanges()"
+        ></button>
+      </div>
+    </div>
+  </form>
+</ng-container>
+
+<ng-template #formfield_placeholder>
+  <p-skeleton
+    width="100%"
+    height="2rem"
+  ></p-skeleton>
+</ng-template>

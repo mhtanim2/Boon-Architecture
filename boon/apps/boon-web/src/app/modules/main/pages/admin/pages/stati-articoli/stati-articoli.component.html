@@ -1,0 +1,192 @@
+<ng-container *rxLet="model$; let vm">
+  <h4 style="font-size: 16px; color: #60604D">ARTICLES STATUSES MANAGEMENT</h4>
+
+  <p-table
+    #statiArticleTable
+    [totalRecords]="vm.statiArticleTotalCount"
+    dataKey="id"
+    [value]="!vm.statiArticleIsLoading ? vm.statiArticle : [{}, {}, {}, {}, {}]"
+    [columns]="cols"
+    [showCurrentPageReport]="!vm.statiArticleIsLoading"
+    responsiveLayout="scroll"
+    [responsive]="true"
+    editMode="row"
+    currentPageReportTemplate="Article statuses {first} - {last} of {totalRecords}"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[10, 50, 100]"
+    sortField="id"
+    [sortOrder]="1"
+    [scrollable]="true"
+    [lazy]="true"
+  >
+    <ng-template
+      pTemplate="header"
+      let-columns
+    >
+      <tr>
+        <th
+          *ngFor="let col of cols"
+          pResizableColumn
+          [pSortableColumn]="col.sortField ?? ''"
+          class="p-table-scrollable-header"
+          [ngClass]="col.hidden ? 'hidden' : ''"
+        >
+          <div style="display: flex; align-items: center; text-wrap: nowrap">
+            <div>
+              {{ col.header }}
+              <p-sortIcon
+                *ngIf="col.sortField"
+                [field]="col.sortField"
+              ></p-sortIcon>
+            </div>
+
+            <ng-container [ngSwitch]="col.field">
+              <p-columnFilter
+                *ngSwitchCase="'id'"
+                type="text"
+                display="menu"
+                [showOperator]="false"
+                [showAddButton]="true"
+                [field]="col.field"
+              ></p-columnFilter>
+
+              <p-columnFilter
+                *ngSwitchCase="'nome'"
+                type="text"
+                display="menu"
+                [showOperator]="false"
+                [showAddButton]="true"
+                [field]="col.field"
+              ></p-columnFilter>
+
+              <p-columnFilter
+                *ngSwitchCase="'descrizione'"
+                type="text"
+                display="menu"
+                [showOperator]="false"
+                [showAddButton]="true"
+                [field]="col.field"
+              ></p-columnFilter>
+            </ng-container>
+          </div>
+        </th>
+        <th
+          alignFrozen="right"
+          pFrozenColumn
+          [frozen]="true"
+        >
+          Azioni
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template
+      pTemplate="body"
+      let-stato
+      let-editing="editing"
+      let-rowIndex="rowIndex"
+    >
+      <ng-container *ngTemplateOutlet="table_placeholder"></ng-container>
+      <tr
+        *ngIf="!vm.statiArticleIsLoading"
+        [pEditableRow]="stato"
+      >
+        <td
+          *ngFor="let col of cols"
+          [ngClass]="col.hidden ? 'hidden' : ''"
+        >
+          <ng-container [ngSwitch]="col.field">
+            <ng-container *ngSwitchCase="'id'">
+              {{ stato.id }}
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'nome'">
+              {{ stato.nome }}
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'descrizione'">
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <input
+                    pInputText
+                    type="text"
+                    [(ngModel)]="stato.descrizione"
+                  />
+                </ng-template>
+                <ng-template pTemplate="output">
+                  {{ stato.descrizione }}
+                </ng-template>
+              </p-cellEditor>
+            </ng-container>
+          </ng-container>
+        </td>
+        <td
+          alignFrozen="right"
+          pFrozenColumn
+          [frozen]="true"
+        >
+          <ng-container *ngIf="!editing">
+            <button
+              pButton
+              pRipple
+              type="button"
+              pInitEditableRow
+              icon="pi pi-pencil"
+              (click)="onRowEditInit(stato)"
+              [disabled]="vm.editArticleLoading"
+              class="p-button-rounded p-button-text"
+              pTooltip="Modify description"
+              tooltipPosition="left"
+            ></button>
+          </ng-container>
+          <ng-container *ngIf="editing">
+            <button
+              pButton
+              pRipple
+              type="button"
+              pSaveEditableRow
+              icon="pi pi-check"
+              [disabled]="vm.editArticleLoading"
+              (click)="onRowEditSave(stato, rowIndex, stato.descrizione)"
+              pTooltip="Save"
+              tooltipPosition="left"
+              class="p-button-rounded p-button-text p-button-success mr-2"
+            ></button>
+            <button
+              *ngIf="editing"
+              pButton
+              pRipple
+              type="button"
+              pCancelEditableRow
+              icon="pi pi-times"
+              (click)="onRowEditCancel(stato, rowIndex)"
+              pTooltip="Cancel"
+              tooltipPosition="left"
+              [disabled]="vm.editArticleLoading"
+              class="p-button-rounded p-button-text p-button-danger"
+            ></button>
+          </ng-container>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <ng-template #table_placeholder>
+    <tr
+      *ngIf="vm.statiArticleIsLoading"
+      style="height: 57px"
+    >
+      <td *ngFor="let col of cols">
+        <p-skeleton
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </td>
+      <td
+        alignFrozen="right"
+        pFrozenColumn
+        [frozen]="true"
+      ></td>
+    </tr>
+  </ng-template>
+</ng-container>

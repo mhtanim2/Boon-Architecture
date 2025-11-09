@@ -1,0 +1,68 @@
+---
+- hosts: dev
+
+  vars:
+    - packages_nvm_version: 'v0.39.7'
+    - packages_node_version: 'lts/hydrogen'
+    - nodeapp_root_folder: 'boon'
+    - nodeapp_user_username: 'user_git'
+    - firewall_ports:
+      - port: ssh
+        proto: tcp    
+      - port: 3000
+        proto: tcp
+
+  tasks:
+    - name: Ensure nvm is installed as git repository
+      become: true
+      become_user: "{{ nodeapp_user_username }}"
+      git:
+        repo: https://github.com/creationix/nvm.git
+        dest: ~/.nvm
+        version: "{{ packages_nvm_version }}"
+
+    - name: Ensure lines sourcing nvm.sh are present in ~/.bashrc
+      become: true
+      become_user: "{{ nodeapp_user_username }}"
+      lineinfile:
+        dest: ~/.bashrc
+        line: "source ~/.nvm/nvm.sh"
+        create: yes
+
+    - name: Ensure selected node version is installed and set as default
+      become: true
+      become_user: "{{ nodeapp_user_username }}"
+      shell:
+        cmd: "bash -ilc 'nvm install {{ packages_node_version }} && nvm alias default {{ packages_node_version }}'"
+        creates: "/home/{{ nodeapp_user_username }}/.nvm/alias"
+
+    - name: Register fact nvm default npm executable path
+      become: true
+      become_user: "{{ nodeapp_user_username }}"
+      shell: bash -ilc 'which npm'
+      register: nvm_npm_path
+      changed_when: false
+
+    - name: Install pm2
+      become: true
+      become_user: "{{ nodeapp_user_username }}"
+      shell:
+        cmd: "bash -ilc 'npm install -g pm2'"
+
+    - name: Install ufw package
+      become: true
+      package:
+        name: ufw
+        state: present
+
+    - name: Open firewall ports
+      become: true
+      community.general.ufw:
+        state: enabled
+        port: "{{ item.port }}"
+        proto: "{{ item.proto }}"
+        rule: allow
+      loop: "{{ firewall_ports }}"
+
+  handlers:
+

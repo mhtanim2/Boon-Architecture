@@ -1,0 +1,298 @@
+<ng-container *rxLet="model$; let vm">
+  <div>
+    <h3 *ngIf="!vm.templateIsLoading; else emptyTitle">
+      {{
+        vm.template
+          ? 'Edit of template "' + vm.template.nome + '" for client "' + vm.clientInfo.cliente.ragioneSociale + '"'
+          : 'New template for client "' + vm.clientInfo.cliente.ragioneSociale + '"'
+      }}
+    </h3>
+    <form [formGroup]="templateForm">
+      <div class="formgrid grid p-fluid">
+        <div class="field col-12 lg:col-3">
+          <label for="nome"
+            >Template name
+            <small
+              *ngIf="templateForm.controls.nome.invalid"
+              class="p-error"
+              >*</small
+            >
+          </label>
+          <input
+            type="text"
+            id="nome"
+            [formControl]="templateForm.controls.nome"
+            pInputText
+            class="w-full"
+            [ngClass]="{
+              'ng-invalid ng-dirty': templateForm.controls.nome.invalid && vm.submitted
+            }"
+          />
+        </div>
+        <div class="field col-12 lg:col-3">
+          <label for="funzionalita"
+            >Feature
+            <small
+              *ngIf="templateForm.controls.idFunzionalita.invalid"
+              class="p-error"
+              >*</small
+            >
+          </label>
+          <p-dropdown
+            [options]="vm.funzionalitaClient"
+            name="funzionalita"
+            appendTo="body"
+            [formControl]="templateForm.controls.idFunzionalita"
+            optionLabel="nome"
+            optionValue="id"
+            [baseZIndex]="10002"
+            placeholder="Select a feature"
+            [ngClass]="{
+              'ng-invalid ng-dirty': templateForm.controls.idFunzionalita.invalid && vm.submitted
+            }"
+          >
+          </p-dropdown>
+        </div>
+        <div class="field col-12 lg:col-2">
+          <label class="w-full">Enabled</label>
+          <div
+            class="flex align-items-center"
+            style="height: 35px"
+          >
+            <p-inputSwitch
+              [ngModel]="templateForm.value.stato?.flagAbilitato ?? true"
+              [ngModelOptions]="{ standalone: true }"
+              (onChange)="changeState($event.checked, templateForm)"
+            >
+            </p-inputSwitch>
+          </div>
+        </div>
+        <div class="field col-12 lg:col-4">
+          <label class="w-full">&nbsp;</label>
+          <div class="flex align-items-center">
+            <button
+              pButton
+              pRipple
+              (click)="revertChanges()"
+              icon="pi pi-times"
+              [label]="'REVERT CHANGES'"
+              [disabled]="vm.isLoading || vm.isSaving"
+            ></button>
+            <button
+              pButton
+              pRipple
+              (click)="submit()"
+              class="ml-2"
+              [icon]="!vm.isSaving ? 'pi pi-check' : 'pi pi-spin pi-spinner'"
+              [label]="!vm.isSaving ? (vm.template ? 'SAVE TEMPLATE' : 'ADD TEMPLATE') : 'SAVING...'"
+              [disabled]="vm.isLoading || vm.isSaving"
+            ></button>
+          </div>
+        </div>
+      </div>
+
+      <p-divider></p-divider>
+
+      <p-orderList
+        *ngIf="!vm.isLoading && !vm.isSaving"
+        [value]="vm.orderOfColumns"
+        [dragdrop]="true"
+      >
+        <ng-template
+          let-index
+          let-orderListIndex="index"
+          pTemplate="item"
+        >
+          <ng-container *ngIf="templateForm.controls.composizione.controls[index]; let columnControl">
+            <div class="formgrid grid p-fluid pl-2 py-1">
+              <div class="hidden lg:flex lg:align-items-center lg:justify-content-center lg:pl-2">
+                <i class="pi pi-bars"></i>
+              </div>
+              <div class="field col-12 lg:col-3">
+                <label for="nomeColonna"
+                  >Column name in file
+                  <small
+                    *ngIf="columnControl.controls.nomeColonna.invalid"
+                    class="p-error"
+                    >*</small
+                  >
+                </label>
+                <input
+                  type="text"
+                  id="nomeColonna"
+                  [formControl]="columnControl.controls.nomeColonna"
+                  pInputText
+                  class="w-full"
+                  [ngClass]="{
+                    'ng-invalid ng-dirty': columnControl.controls.nomeColonna.invalid && vm.submitted
+                  }"
+                />
+              </div>
+              <div class="field col-12 lg:col-1">
+                <label for="tipoDati"
+                  >Type
+                  <small
+                    *ngIf="columnControl.controls.tipoDati.invalid"
+                    class="p-error"
+                    >*</small
+                  >
+                </label>
+                <p-dropdown
+                  [options]="vm.tipoDatiList"
+                  name="tipoDati"
+                  appendTo="body"
+                  [formControl]="columnControl.controls.tipoDati"
+                  [baseZIndex]="10002"
+                  [ngClass]="{
+                    'ng-invalid ng-dirty': columnControl.controls.tipoDati.invalid && vm.submitted
+                  }"
+                >
+                </p-dropdown>
+              </div>
+              <div class="field col-12 lg:col-1">
+                <label
+                  for="lunghezzaMassima"
+                  [ngClass]="{
+                    'block': columnControl.value.tipoDati === 'text',
+                    'hidden': columnControl.value.tipoDati !== 'text',
+                  }"
+                  >Max length
+                  <small
+                    *ngIf="columnControl.controls.lunghezzaMassima.invalid"
+                    class="p-error"
+                    >*</small
+                  >
+                </label>
+                <p-inputNumber
+                  id="lunghezzaMassima"
+                  [formControl]="columnControl.controls.lunghezzaMassima"
+                  placeholder="Max characters length"
+                  class="w-full"
+                  [ngClass]="{
+                    block: columnControl.value.tipoDati === 'text',
+                    hidden: columnControl.value.tipoDati !== 'text',
+                    'ng-invalid ng-dirty': columnControl.controls.lunghezzaMassima.invalid && vm.submitted
+                  }"
+                ></p-inputNumber>
+              </div>
+              <div class="field col-12 lg:col-1 align-self-center">
+                <label class="w-full">&nbsp;</label>
+                <p-checkbox
+                  [binary]="true"
+                  label="Required"
+                  [formControl]="columnControl.controls.flagRichiesto"
+                ></p-checkbox>
+              </div>
+              <div class="field col-12 lg:col-2">
+                <label for="regola"
+                  >Parsing rule
+                  <small
+                    *ngIf="columnControl.controls.regola.invalid"
+                    class="p-error"
+                    >*</small
+                  >
+                </label>
+                <input
+                  type="text"
+                  id="regola"
+                  [formControl]="columnControl.controls.regola"
+                  pInputText
+                  class="w-full"
+                  [ngClass]="{
+                    'ng-invalid ng-dirty': columnControl.controls.regola.invalid && vm.submitted
+                  }"
+                />
+              </div>
+              <div class="field col-12 lg:col-2">
+                <label for="dataMatch"
+                  >Match in database
+                  <small
+                    *ngIf="columnControl.controls.dataMatch.invalid"
+                    class="p-error"
+                    >*</small
+                  >
+                </label>
+                <input
+                  type="text"
+                  id="dataMatch"
+                  [formControl]="columnControl.controls.dataMatch"
+                  pInputText
+                  class="w-full"
+                  [ngClass]="{
+                    'ng-invalid ng-dirty': columnControl.controls.dataMatch.invalid && vm.submitted
+                  }"
+                />
+              </div>
+              <div class="field col-12 lg:col-1">
+                <label class="w-full">&nbsp;</label>
+                <p-button
+                  *ngIf="orderListIndex > 0"
+                  icon="pi pi-trash"
+                  (click)="deleteColonna(index)"
+                  pTooltip="Remove column definition"
+                  tooltipPosition="left"
+                  styleClass="p-button-text"
+                ></p-button>
+              </div>
+            </div>
+          </ng-container>
+        </ng-template>
+      </p-orderList>
+
+      <div class="flex justify-content-center flex-wrap py-3">
+        <button
+          pButton
+          pRipple
+          icon="pi pi-plus"
+          (click)="addColonna()"
+          label="ADD NEW COLUMN DEFINITION"
+        ></button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngFor="let number of [1, 2, 3, 4, 5]">
+    <div
+      class="grid"
+      *ngIf="vm.isLoading || vm.isSaving"
+    >
+      <div class="col-12 lg:col-4">
+        <p-skeleton
+          styleClass="mt-2"
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </div>
+      <div class="col-12 lg:col-3">
+        <p-skeleton
+          styleClass="mt-2"
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </div>
+      <div class="col-12 lg:col-3">
+        <p-skeleton
+          styleClass="mt-2"
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </div>
+      <div class="col-12 lg:col-2">
+        <p-skeleton
+          styleClass="mt-2"
+          width="100%"
+          height="2rem"
+        ></p-skeleton>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #emptyTitle>
+  <h3>
+    <p-skeleton
+      width="70%"
+      height="2rem"
+    ></p-skeleton>
+  </h3>
+</ng-template>

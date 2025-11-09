@@ -1,0 +1,71 @@
+<div class="login-body">
+  <div class="login-wrapper">
+    <div class="login-panel">
+      <a
+        [routerLink]="['/']"
+        class="logo"
+      >
+        <img
+          src="assets/images/logo_dark.png"
+          class="loginLogo"
+        />
+      </a>
+
+      <div *ngIf="!isLoading">
+        <p-card>
+          <ng-container *ngTemplateOutlet="avatar"> </ng-container>
+
+          <p-divider class="w-full"></p-divider>
+
+          <span class="SCtext">Which customer do you wish to operate on?</span>
+
+          <div class="flex justify-content-center pt-2">
+            <p-listbox
+              [options]="clientsList"
+              optionLabel="ragioneSociale"
+              [style]="{ width: '15rem' }"
+              (onClick)="goToClientHomePage($event)"
+              [listStyle]="{ 'max-height': '250px' }"
+            >
+              <ng-template
+                let-client
+                pTemplate="item"
+              >
+                <div class="flex align-items-center w-full gap-2">
+                  <p-avatar
+                    shape="circle"
+                    [image]="client.tenant.logo"
+                    styleClass=""
+                    [style]="{ 'background-color': '#515C66', color: '#ffffff', width: '2.5rem', height: '2.5rem' }"
+                  ></p-avatar>
+                  <div>{{ client.ragioneSociale }}</div>
+                </div>
+              </ng-template>
+            </p-listbox>
+          </div>
+
+          <p-button
+            styleClass="p-button-link"
+            label="Logout"
+            (click)="logout()"
+          ></p-button>
+        </p-card>
+      </div>
+
+      <p></p>
+    </div>
+  </div>
+</div>
+
+<ng-template #avatar>
+  <p-avatar
+    shape="circle"
+    styleClass=""
+    [style]="{ 'background-color': '#2196F3', color: '#ffffff', width: '3.5rem', height: '3.5rem' }"
+    [label]="authService.userProfileInitials"
+  ></p-avatar>
+  <div class="profile-info mt-2">
+    <h6>{{ user.nome }} {{ user.cognome }}</h6>
+    <span>{{ user.username }}</span>
+  </div>
+</ng-template>

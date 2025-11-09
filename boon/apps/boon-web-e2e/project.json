@@ -1,0 +1,33 @@
+{
+  "name": "boon-web-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/boon-web-e2e/src",
+  "projectType": "application",
+  "targets": {
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/boon-web-e2e/cypress.config.ts",
+        "devServerTarget": "boon-web:serve:development",
+        "testingType": "e2e"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": "boon-web:serve:production"
+        },
+        "ci": {
+          "devServerTarget": "boon-web:serve-static"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/boon-web-e2e/**/*.{js,ts}"]
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["boon-web"]
+}

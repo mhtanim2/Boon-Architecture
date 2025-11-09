@@ -1,0 +1,114 @@
+<div class="login-body">
+  <div class="login-wrapper">
+    <div class="login-panel">
+      <div class="flex flex-row">
+        <a class="logo mr-2">
+          <img
+            src="assets/images/logo_dark.png"
+            class="loginLogo"
+          />
+        </a>
+        <a class="logo">
+          <img
+            [src]="activeTenantResolver.resolve().logo"
+            class="loginLogo"
+          />
+        </a>
+      </div>
+      <form
+        (ngSubmit)="submit()"
+        [formGroup]="loginForm"
+      >
+        <div class="login-form">
+          <h2>Welcome to Boon</h2>
+
+          <p class="m-0">
+            <small
+              *ngIf="loginForm.controls.username.errors?.required && submitted"
+              class="p-error"
+              >*E-mail is required</small
+            >
+          </p>
+          <p class="m-0">
+            <small
+              *ngIf="loginForm.controls.username.errors?.email && submitted"
+              class="p-error"
+              >*E-mail format invalid</small
+            >
+          </p>
+          <input
+            pInputText
+            [ngClass]="{
+              'ng-invalid ng-dirty': loginForm.controls.username.invalid && submitted
+            }"
+            type="text"
+            autocomplete="off"
+            pInputText
+            placeholder="E-mail"
+            formControlName="username"
+          />
+
+          <p class="m-0">
+            <small
+              *ngIf="loginForm.controls.password.errors?.required && submitted"
+              class="p-error"
+              >*Password is required</small
+            >
+          </p>
+          <p-password
+            styleClass="w-full"
+            formControlName="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            placeholder="Password"
+            [ngClass]="{
+              'ng-invalid ng-dirty': loginForm.controls.password.invalid && submitted
+            }"
+          ></p-password>
+
+          <button
+            pButton
+            pRipple
+            class="p-button-rounded p-button-outlined"
+            [disabled]="isLoading"
+            [label]="isLoading ? 'LOGGIN IN...' : 'LOGIN'"
+            type="submit"
+          ></button>
+        </div>
+      </form>
+
+      <p-messages
+        [(value)]="messages"
+        [enableService]="false"
+        [closable]="false"
+        [showTransitionOptions]="'500ms'"
+        [hideTransitionOptions]="'0ms'"
+      ></p-messages>
+
+      <div *ngIf="!!errorCode">
+        <div [ngSwitch]="errorCode">
+          <div
+            *ngSwitchCase="'ERROR_INTERNAL_SERVER_ERROR'"
+            class="m-b-10"
+          >
+            <p-message
+              severity="warn"
+              class="messageErrorLogin"
+              [text]="'Impossibile effettuare il login in questo momento.'"
+            >
+            </p-message>
+          </div>
+        </div>
+      </div>
+
+      <p>
+        Forgot your password?<a
+          style="text-decoration: underline"
+          [routerLink]="['/recovery-password']"
+        >
+          Click here.</a
+        >
+      </p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,36 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2022", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@boon/backend/database": ["libs/backend/database/src/index.ts"],
+      "@boon/backend/database/entities/*": ["libs/backend/database/src/lib/entities/*"],
+      "@boon/backend/database/repositories/*": ["libs/backend/database/src/lib/repositories/*"],
+      "@boon/backend/database/stored-procedures/*": ["libs/backend/database/src/lib/stored-procedures/*"],
+      "@boon/backend/database/table-functions/*": ["libs/backend/database/src/lib/table-functions/*"],
+      "@boon/backend/database/views/*": ["libs/backend/database/src/lib/views/*"],
+      "@boon/backend/mailer": ["libs/backend/mailer/src/index.ts"],
+      "@boon/common/codice-fiscale": ["libs/common/codice-fiscale/src/index.ts"],
+      "@boon/common/core": ["libs/common/core/src/index.ts"],
+      "@boon/common/dayjs": ["libs/common/dayjs/src/index.ts"],
+      "@boon/common/zod": ["libs/common/zod/src/index.ts"],
+      "@boon/frontend/core/*": ["apps/boon-web/src/app/core/*"],
+      "@boon/frontend/environments/*": ["apps/boon-web/src/environments/*"],
+      "@boon/interfaces/boon-api": ["libs/interfaces/boon-api/src/index.ts"],
+      "@boon/interfaces/database": ["libs/interfaces/database/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}
